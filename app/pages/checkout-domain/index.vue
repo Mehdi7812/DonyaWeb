@@ -206,13 +206,6 @@ async function submitOrder() {
                 <Globe class="w-5 h-5 text-purple-400" /> نام دامنه
               </h2>
               <div class="flex flex-col sm:flex-row gap-3">
-                <input
-                  v-model="domainName"
-                  type="text"
-                  dir="ltr"
-                  placeholder="my-domain"
-                  class="flex-1 px-4 py-3 rounded-xl input-glass text-white placeholder-gray-500 outline-none"
-                >
                 <select
                   v-model="selectedTld"
                   dir="ltr"
@@ -220,6 +213,14 @@ async function submitOrder() {
                 >
                   <option v-for="(price, ext) in tlds" :key="ext" :value="ext" class="bg-slate-800">{{ ext }}</option>
                 </select>
+                
+                <input
+                  v-model="domainName"
+                  type="text"
+                  dir="ltr"
+                  placeholder="my-domain"
+                  class="flex-1 px-4 py-3 rounded-xl input-glass text-white placeholder-gray-500 outline-none"
+                >
               </div>
               <p class="text-sm text-gray-400 mt-3">
                 دامنه انتخابی: <span class="text-purple-300 font-medium" dir="ltr">{{ fullDomain }}</span>
