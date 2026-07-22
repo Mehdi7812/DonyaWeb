@@ -1,6 +1,6 @@
 <script setup>
 useHead({
-  title: 'VPS ابری | کلودینو'
+  title: 'VPS ابری | دنیاوب'
 })
 
 </script>

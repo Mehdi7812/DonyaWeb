@@ -7,7 +7,7 @@ import {
 } from 'lucide-vue-next'
 
 useHead({
-  title: 'ثبت دامنه | کلودینو'
+  title: 'ثبت دامنه | دنیاوب'
 })
 
 const route = useRoute()
@@ -423,7 +423,7 @@ async function submitOrder() {
               >
               <span>
                 <NuxtLink to="/terms" class="text-purple-300 hover:text-purple-200 transition-colors">قوانین و مقررات</NuxtLink>
-                استفاده از خدمات کلودینو را مطالعه کرده‌ام و می‌پذیرم
+                استفاده از خدمات دنیاوب را مطالعه کرده‌ام و می‌پذیرم
               </span>
             </label>
           </div>

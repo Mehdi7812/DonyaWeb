@@ -7,7 +7,7 @@ import {
 } from 'lucide-vue-next'
 
 useHead({
-  title: 'سفارش VPS | کلودینو'
+  title: 'سفارش VPS | دنیاوب'
 })
 
 const route = useRoute()
@@ -45,7 +45,7 @@ const activeCycle = computed(() => cycles.find((c) => c.id === selectedCycle.val
 
 // --- Add-ons ---
 const addons = [
-  { id: 'managed', label: 'پشتیبانی مدیریت‌شده (Managed)', desc: 'پیکربندی، مانیتورینگ و رفع مشکلات سرور توسط تیم فنی کلودینو', monthlyPrice: 250000 },
+  { id: 'managed', label: 'پشتیبانی مدیریت‌شده (Managed)', desc: 'پیکربندی، مانیتورینگ و رفع مشکلات سرور توسط تیم فنی دنیاوب', monthlyPrice: 250000 },
   { id: 'backup', label: 'بک‌آپ افزایشی روزانه', desc: 'تهیه نسخه پشتیبان روزانه با نگهداری ۱۴ روزه', monthlyPrice: 60000 },
   { id: 'extraip', label: 'یک IP اختصاصی اضافه', desc: 'مناسب برای میزبانی چند سایت با SSL مجزا روی یک سرور', monthlyPrice: 40000 }
 ]
@@ -419,7 +419,7 @@ async function submitOrder() {
               >
               <span>
                 <NuxtLink to="/terms" class="text-purple-300 hover:text-purple-200 transition-colors">قوانین و مقررات</NuxtLink>
-                استفاده از خدمات کلودینو را مطالعه کرده‌ام و می‌پذیرم
+                استفاده از خدمات دنیاوب را مطالعه کرده‌ام و می‌پذیرم
               </span>
             </label>
           </div>

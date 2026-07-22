@@ -3,7 +3,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-vue-next'
 import { ref } from 'vue'
 
 useHead({
-  title: 'ورود | دنیا وب'
+  title: 'ورود | دنیاوب'
 })
 
 definePageMeta({
@@ -49,7 +49,7 @@ async function handleLogin() {
           </NuxtLink>
 
           <h1 class="text-2xl font-bold mb-1">ورود به حساب کاربری</h1>
-          <p class="text-gray-400 text-sm">به دنیا وب خوش آمدید</p>
+          <p class="text-gray-400 text-sm">به دنیاوب خوش آمدید</p>
         </div>
 
         <div

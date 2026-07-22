@@ -22,7 +22,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
           <div class="w-20 flex items-center justify-center">
             <NuxtImg src="/logo.png" cover />
           </div>
-          <span class="text-2xl font-bold bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">دنیا وب</span>
+          <span class="text-2xl font-bold bg-linear-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">دنیاوب</span>
         </NuxtLink>
 
         <div class="hidden md:flex items-center gap-8">
@@ -31,6 +31,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
           <NuxtLink to="/dedicatedserver" class="text-gray-300 hover:text-white transition-colors">سرور اختصاصی</NuxtLink>
           <NuxtLink to="/domain" class="text-gray-300 hover:text-white transition-colors">دامنه</NuxtLink>
           <NuxtLink to="/support" class="text-gray-300 hover:text-white transition-colors">پشتیبانی</NuxtLink>
+          <NuxtLink to="/about-us" class="text-gray-300 hover:text-white transition-colors">درباره ما</NuxtLink>
+          <NuxtLink to="/contact-us" class="text-gray-300 hover:text-white transition-colors">تماس با ما</NuxtLink>
         </div>
 
         <div class="flex items-center gap-4">

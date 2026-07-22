@@ -8,6 +8,8 @@ const productLinks = [
   { label: 'ثبت دامنه', to: '/domain' }
 ]
 const supportLinks = [
+  { label: 'درباره ما', to: '/about-us' },
+  { label: 'ارتباط با ما', to: '/contact-us' },
   { label: 'مرکز آموزش', to: '#' },
   { label: 'وضعیت شبکه', to: '#' },
   { label: 'تماس با ما', to: '/support' },
@@ -24,7 +26,7 @@ const supportLinks = [
             <div class="flex items-center justify-center w-20">
               <NuxtImg src="/logo.png" cover />
             </div>
-            <span class="text-xl font-bold">دنیا وب</span>
+            <span class="text-xl font-bold">دنیاوب</span>
           </NuxtLink>
           <p class="text-gray-400 text-sm leading-relaxed">
             ارائه‌دهنده خدمات میزبانی ابری با تضمین uptime و امنیت بالا برای کسب‌وکارهای آنلاین.
@@ -65,7 +67,7 @@ const supportLinks = [
         </div>
       </div>
       <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="text-gray-400 text-sm">© ۱۴۰۳ دنیا وب. تمامی حقوق محفوظ است.</p>
+        <p class="text-gray-400 text-sm">© ۱۴۰۳ دنیاوب. تمامی حقوق محفوظ است.</p>
         <div class="flex gap-4">
           <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/20 transition-all">
             <Instagram class="w-5 h-5" />

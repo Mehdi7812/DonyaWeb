@@ -32,7 +32,7 @@ const features = [
       <div class="absolute inset-0 bg-linear-to-r from-purple-900/20 to-blue-900/20"></div>
       <div class="relative z-10 grid md:grid-cols-2 gap-12 items-center">
         <div>
-          <h2 class="text-3xl md:text-4xl font-bold mb-6">چرا <span class="text-purple-400">دنیا وب</span>؟</h2>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">چرا <span class="text-purple-400">دنیاوب</span>؟</h2>
           <div class="space-y-6">
             <div v-for="f in features" :key="f.title" class="flex gap-4">
               <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" :class="f.bg">

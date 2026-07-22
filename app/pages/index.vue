@@ -1,6 +1,6 @@
 <script setup>
 useHead({
-  title: "دنیا وب | میزبانی وب مدرن",
+  title: "دنیاوب | میزبانی وب مدرن",
 });
 </script>
 

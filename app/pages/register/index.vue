@@ -3,7 +3,7 @@ import { User, Mail, Lock, Eye, EyeOff, Check } from 'lucide-vue-next'
 import { ref, computed } from 'vue'
 
 useHead({
-  title: 'ثبت‌نام | دنیا وب'
+  title: 'ثبت‌نام | دنیاوب'
 })
 
 definePageMeta({
@@ -79,7 +79,7 @@ async function handleRegister() {
           </NuxtLink>
 
           <h1 class="text-2xl font-bold mb-1">ساخت حساب کاربری</h1>
-          <p class="text-gray-400 text-sm">به جمع مشتریان دنیا وب بپیوندید</p>
+          <p class="text-gray-400 text-sm">به جمع مشتریان دنیاوب بپیوندید</p>
         </div>
 
         <div
