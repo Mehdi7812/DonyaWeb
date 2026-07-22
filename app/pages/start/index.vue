@@ -16,6 +16,8 @@ useHead({
     <StartDomain />
 
     <!-- Plan selection && CTA -->
-    <StartPlanSelection />    
+    <StartPlanSelection />
+
+    <StartFaqSection />
   </div>
 </template>

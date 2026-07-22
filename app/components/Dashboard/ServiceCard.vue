@@ -14,7 +14,7 @@ const typeIcons = {
 
 <template>
   <div class="glass-card rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-    <div class="w-12 h-12 rounded-xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+    <div class="w-12 h-12 rounded-xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center shrink-0">
       <component :is="typeIcons[service.type]" class="w-6 h-6 text-white" />
     </div>
 
@@ -31,7 +31,7 @@ const typeIcons = {
       <div>{{ service.price }} تومان / {{ service.cycle }}</div>
     </div>
 
-    <div class="flex items-center gap-2 flex-shrink-0">
+    <div class="flex items-center gap-2 shrink-0">
       <button type="button" class="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition-all text-sm flex items-center gap-1.5">
         <RotateCcw class="w-4 h-4" />
         تمدید
