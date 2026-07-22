@@ -283,7 +283,7 @@ function toggleFaq(index) {
           >
             <span class="font-medium">{{ faq.q }}</span>
             <ChevronDown
-              class="w-5 h-5 text-gray-400 flex-shrink-0 transition-transform"
+              class="w-5 h-5 text-gray-400 shrink-0 transition-transform"
               :class="faq.open ? 'rotate-180' : ''"
             />
           </button>

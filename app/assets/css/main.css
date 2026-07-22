@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
-/* پیکربندی تم به‌جای tailwind.config.js — روش استاندارد Tailwind v4 */
-@theme {
+/* تعریف متغیرهای تم به صورت استاندارد CSS */
+:root {
   --font-sans: 'Vazirmatn', sans-serif;
 }
 
 @layer base {
   * {
-    font-family: 'Vazirmatn', sans-serif;
+    font-family: var(--font-sans);
   }
 
   body {
@@ -85,4 +85,53 @@
 
 .animate-float {
   animation: float 10s infinite ease-in-out;
+}
+
+/* ===== اسکرول‌بار سفارشی مدرن ===== */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8b5cf6 rgba(255, 255, 255, 0.05);
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #8b5cf6;
+  background-image: linear-gradient(180deg, #a855f7, #3b82f6);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  transition: background-image 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-image: linear-gradient(180deg, #9333ea, #2563eb);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* نسخه‌ی باریک‌تر برای عناصر داخلی (سایدبار، دراپ‌داون، تکست‌اریا) */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  border-width: 1px;
 }

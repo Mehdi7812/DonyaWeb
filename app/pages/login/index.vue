@@ -30,7 +30,7 @@ async function handleLogin() {
     // TODO: اتصال به API واقعی ورود
     await new Promise((resolve) => setTimeout(resolve, 1200))
     // در صورت موفقیت، کاربر را به داشبورد هدایت کنید
-    // await navigateTo('/dashboard')
+    await navigateTo('/dashboard')
   } catch (err) {
     errorMessage.value = 'ایمیل یا رمز عبور اشتباه است'
   } finally {
@@ -78,7 +78,7 @@ async function handleLogin() {
           <div>
             <div class="flex items-center justify-between mb-2">
               <label for="password" class="block text-sm text-gray-300">رمز عبور</label>
-              <a href="#" class="text-xs text-purple-300 hover:text-purple-200 transition-colors">فراموشی رمز عبور؟</a>
+              <NuxtLink to="/forgot-password" class="text-xs text-purple-300 hover:text-purple-200 transition-colors">فراموشی رمز عبور؟</NuxtLink>
             </div>
             <div class="relative">
               <Lock class="w-5 h-5 text-gray-400 absolute top-1/2 -translate-y-1/2 right-4" />
