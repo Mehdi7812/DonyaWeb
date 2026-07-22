@@ -2,7 +2,6 @@
 useHead({
   title: 'VPS ابری | دنیاوب'
 })
-
 </script>
 
 <template>

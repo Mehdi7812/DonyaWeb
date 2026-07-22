@@ -130,8 +130,8 @@ function closeMobileSidebar() {
     <!-- هدر سایدبار -->
     <div class="flex items-center justify-between h-20 px-5 border-b border-white/10 shrink-0">
       <NuxtLink to="/" class="flex items-center gap-2.5 group" @click="closeMobileSidebar">
-        <div class="w-9 h-9 rounded-xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-[1.02] transition-transform">
-          <NuxtImg src="/logo.png" class="w-5 h-5 object-contain" alt="دنیا وب" />
+        <div class="w-20 flex items-center justify-center group-hover:scale-[1.02] transition-transform">
+          <NuxtImg src="/logo.png" cover alt="دنیا وب" />
         </div>
         <span class="font-bold text-base">دنیا وب</span>
       </NuxtLink>
