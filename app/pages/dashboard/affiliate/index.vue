@@ -45,7 +45,7 @@ function formatNumber(n) {
         </div>
         <button
           type="button"
-          class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-medium text-sm shadow-lg shadow-purple-500/30 flex-shrink-0"
+          class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-medium text-sm shadow-lg shadow-purple-500/30 shrink-0"
           @click="copyLink"
         >
           <component :is="copied ? Check : Copy" class="w-4 h-4" />

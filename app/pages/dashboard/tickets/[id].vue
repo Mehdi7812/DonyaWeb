@@ -64,7 +64,7 @@ async function sendReply() {
         :class="m.from === 'user' ? 'flex-row-reverse' : ''"
       >
         <div
-          class="w-10 h-10 rounded-full bg-linear-to-br flex items-center justify-center text-xs font-bold flex-shrink-0"
+          class="w-10 h-10 rounded-full bg-linear-to-br flex items-center justify-center text-xs font-bold shrink-0"
           :class="m.from === 'user' ? 'from-purple-500 to-blue-600' : 'from-pink-500 to-purple-600'"
         >
           {{ m.name.split(' ').map(w => w[0]).join('') }}

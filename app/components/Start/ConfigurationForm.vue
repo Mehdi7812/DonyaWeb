@@ -1,7 +1,7 @@
 <script setup>
 import {
   Globe,
-  MonitorCog,
+  Monitor,
   ShieldCheck,
   ServerCog,
   KeyRound,
@@ -13,6 +13,10 @@ const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
+  },
+  domain: {
+    type: String,
+    default: "",
   },
 });
 
@@ -117,7 +121,7 @@ const billingCycles = [
 
         <div class="flex items-center gap-3 mb-5">
 
-          <MonitorCog class="w-6 h-6 text-purple-400"/>
+          <Monitor class="w-6 h-6 text-purple-400"/>
 
           <h3 class="font-semibold">
             سیستم عامل
@@ -277,13 +281,25 @@ const billingCycles = [
 
     <div class="glass-card rounded-2xl p-6">
 
-      <label class="block mb-3 font-semibold">
-        Hostname
-      </label>
+      <div class="flex items-center justify-between mb-3">
+        <label class="font-semibold">
+          Hostname
+        </label>
+
+        <button
+          v-if="domain"
+          type="button"
+          class="text-xs text-purple-300 hover:text-purple-200 transition"
+          @click="config.hostname = `server.${domain}`"
+        >
+          استفاده از دامنه انتخابی
+        </button>
+      </div>
 
       <input
         v-model="config.hostname"
         type="text"
+        dir="ltr"
         placeholder="server01.donyaweb.com"
         class="input-glass w-full rounded-xl px-4 py-3"
       >

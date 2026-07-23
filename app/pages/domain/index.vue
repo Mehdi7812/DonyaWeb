@@ -20,7 +20,8 @@ const tlds = [
 ]
 
 // --- Domain search (client-side mock availability, replace with real API) ---
-const query = ref('')
+const route = useRoute()
+const query = ref(typeof route.query.domain === 'string' ? route.query.domain : '')
 const isSearching = ref(false)
 const results = ref(null)
 
@@ -43,6 +44,10 @@ function searchDomain() {
     isSearching.value = false
   }, 700)
 }
+
+onMounted(() => {
+  if (query.value) searchDomain()
+})
 
 // --- Why register with us ---
 const features = [

@@ -26,7 +26,7 @@ function toggle(id, key) {
   <div class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <p class="text-gray-400 text-sm">مدیریت نیم‌سرورها، قفل انتقال، حریم‌خصوصی واتس و تمدید خودکار دامنه‌های خود را از اینجا انجام دهید.</p>
-      <div class="flex gap-2 flex-shrink-0">
+      <div class="flex gap-2 shrink-0">
         <NuxtLink
           to="/dashboard/domains/transfer"
           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/20 hover:bg-white/10 transition-all text-sm font-medium"
@@ -48,7 +48,7 @@ function toggle(id, key) {
       <div v-for="d in domains" :key="d.id" class="glass-card rounded-2xl p-6 space-y-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3 min-w-0">
-            <div class="w-11 h-11 rounded-xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+            <div class="w-11 h-11 rounded-xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center shrink-0">
               <Globe class="w-5 h-5 text-white" />
             </div>
             <div class="min-w-0">
@@ -62,7 +62,7 @@ function toggle(id, key) {
 
           <NuxtLink
             :to="`/dashboard/domains/renew?domain=${d.identifier}`"
-            class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all text-sm flex-shrink-0"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all text-sm shrink-0"
           >
             <RotateCcw class="w-4 h-4" />
             تمدید دامنه
@@ -78,7 +78,7 @@ function toggle(id, key) {
             <span class="flex items-center gap-2 text-gray-300"><RotateCcw class="w-4 h-4" /> تمدید خودکار</span>
             <span
               dir="ltr"
-              class="w-10 h-6 rounded-full relative transition-colors flex-shrink-0"
+              class="w-10 h-6 rounded-full relative transition-colors shrink-0"
               :class="localSettings[d.id].autoRenew ? 'bg-purple-600' : 'bg-white/20'"
             >
               <span
@@ -99,7 +99,7 @@ function toggle(id, key) {
             </span>
             <span
               dir="ltr"
-              class="w-10 h-6 rounded-full relative transition-colors flex-shrink-0"
+              class="w-10 h-6 rounded-full relative transition-colors shrink-0"
               :class="localSettings[d.id].locked ? 'bg-purple-600' : 'bg-white/20'"
             >
               <span
@@ -117,7 +117,7 @@ function toggle(id, key) {
             <span class="flex items-center gap-2 text-gray-300"><ShieldCheck class="w-4 h-4" /> حریم خصوصی WHOIS</span>
             <span
               dir="ltr"
-              class="w-10 h-6 rounded-full relative transition-colors flex-shrink-0"
+              class="w-10 h-6 rounded-full relative transition-colors shrink-0"
               :class="localSettings[d.id].privacy ? 'bg-purple-600' : 'bg-white/20'"
             >
               <span

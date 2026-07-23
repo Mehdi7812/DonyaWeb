@@ -48,7 +48,7 @@ function addZone() {
       <p class="text-gray-400 text-sm">با فعال‌سازی CDN، سرعت بارگذاری سایت افزایش می‌یابد و بار سرور اصلی کاهش پیدا می‌کند.</p>
       <button
         type="button"
-        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-medium text-sm shadow-lg shadow-purple-500/30 flex-shrink-0"
+        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-medium text-sm shadow-lg shadow-purple-500/30 shrink-0"
         @click="showAddForm = !showAddForm"
       >
         <Plus class="w-4 h-4" />
@@ -78,7 +78,7 @@ function addZone() {
       <div v-for="z in zones" :key="z.id" class="glass-card rounded-2xl p-6 space-y-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3 min-w-0">
-            <div class="w-11 h-11 rounded-xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+            <div class="w-11 h-11 rounded-xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center shrink-0">
               <Network class="w-5 h-5 text-white" />
             </div>
             <div class="min-w-0">
@@ -92,7 +92,7 @@ function addZone() {
 
           <button
             type="button"
-            class="px-4 py-2 rounded-lg text-sm font-medium border transition-all flex-shrink-0"
+            class="px-4 py-2 rounded-lg text-sm font-medium border transition-all shrink-0"
             :class="z.status === 'active'
               ? 'border-red-500/30 text-red-300 hover:bg-red-500/10'
               : 'bg-linear-to-r from-purple-600 to-blue-600 border-transparent hover:from-purple-700 hover:to-blue-700'"

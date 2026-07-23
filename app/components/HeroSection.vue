@@ -13,6 +13,14 @@ const domainPrices = [
   { tld: '.ir', price: '۴۵,۰۰۰ تومان' },
   { tld: '.net', price: '۹۵,۰۰۰ تومان' }
 ]
+
+const domainQuery = ref('')
+
+function searchDomain() {
+  const name = domainQuery.value.trim()
+  if (!name) return
+  navigateTo({ path: '/domain', query: { domain: name } })
+}
 </script>
 
 <template>
@@ -35,11 +43,18 @@ const domainPrices = [
       <div class="max-w-3xl mx-auto mb-12 relative">
         <div class="glass-strong rounded-2xl p-2 flex flex-col md:flex-row gap-2 shadow-2xl">
           <input
+            v-model="domainQuery"
             type="text"
+            dir="ltr"
             placeholder="نام دامنه مورد نظر خود را وارد کنید..."
-            class="flex-1 px-6 py-4 rounded-xl input-glass text-white placeholder-gray-400 outline-none text-lg"
+            class="flex-1 px-6 py-4 rounded-xl input-glass text-white placeholder-gray-400 outline-none text-lg text-right"
+            @keyup.enter="searchDomain"
           >
-          <button class="px-8 py-4 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+          <button
+            type="button"
+            class="px-8 py-4 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold text-lg shadow-lg flex items-center justify-center gap-2"
+            @click="searchDomain"
+          >
             <Search class="w-5 h-5" />
             جستجو دامنه
           </button>

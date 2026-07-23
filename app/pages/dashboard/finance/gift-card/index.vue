@@ -78,7 +78,7 @@ async function redeem() {
         <button
           type="submit"
           :disabled="isSubmitting"
-          class="px-6 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold shadow-lg shadow-purple-500/30 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 flex-shrink-0"
+          class="px-6 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold shadow-lg shadow-purple-500/30 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shrink-0"
         >
           <Check class="w-4 h-4" />
           {{ isSubmitting ? 'در حال بررسی...' : 'فعال‌سازی' }}
@@ -102,7 +102,7 @@ async function redeem() {
             <p class="font-mono font-medium text-sm truncate" dir="ltr">{{ c.code }}</p>
             <p class="text-gray-500 text-xs mt-1">صادر شده در {{ c.issuedDate }}</p>
           </div>
-          <div class="flex items-center gap-4 flex-shrink-0">
+          <div class="flex items-center gap-4 shrink-0">
             <span class="font-bold text-sm">{{ formatNumber(c.amount) }} تومان</span>
             <DashboardStatusBadge :status="c.status" />
           </div>

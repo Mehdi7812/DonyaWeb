@@ -1,7 +1,10 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { Menu, X } from 'lucide-vue-next'
 
 const scrolled = ref(false)
+const mobileOpen = ref(false)
+const route = useRoute()
 
 function handleScroll() {
   scrolled.value = window.scrollY > 50
@@ -9,6 +12,20 @@ function handleScroll() {
 
 onMounted(() => window.addEventListener('scroll', handleScroll))
 onUnmounted(() => window.removeEventListener('scroll', handleScroll))
+
+watch(() => route.fullPath, () => {
+  mobileOpen.value = false
+})
+
+const navLinks = [
+  { to: '/cloudhosting', label: 'هاست ابری' },
+  { to: '/vps', label: 'VPS' },
+  { to: '/dedicatedserver', label: 'سرور اختصاصی' },
+  { to: '/domain', label: 'دامنه' },
+  { to: '/support', label: 'پشتیبانی' },
+  { to: '/about-us', label: 'درباره ما' },
+  { to: '/contact-us', label: 'تماس با ما' }
+]
 </script>
 
 <template>
@@ -26,24 +43,60 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
         </NuxtLink>
 
         <div class="hidden md:flex items-center gap-8">
-          <NuxtLink to="/cloudhosting" class="text-gray-300 hover:text-white transition-colors">هاست ابری</NuxtLink>
-          <NuxtLink to="/vps" class="text-gray-300 hover:text-white transition-colors">VPS</NuxtLink>
-          <NuxtLink to="/dedicatedserver" class="text-gray-300 hover:text-white transition-colors">سرور اختصاصی</NuxtLink>
-          <NuxtLink to="/domain" class="text-gray-300 hover:text-white transition-colors">دامنه</NuxtLink>
-          <NuxtLink to="/support" class="text-gray-300 hover:text-white transition-colors">پشتیبانی</NuxtLink>
-          <NuxtLink to="/about-us" class="text-gray-300 hover:text-white transition-colors">درباره ما</NuxtLink>
-          <NuxtLink to="/contact-us" class="text-gray-300 hover:text-white transition-colors">تماس با ما</NuxtLink>
+          <NuxtLink
+            v-for="link in navLinks"
+            :key="link.to"
+            :to="link.to"
+            class="text-gray-300 hover:text-white transition-colors"
+          >
+            {{ link.label }}
+          </NuxtLink>
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 sm:gap-4">
           <NuxtLink to="/login" class="hidden md:block px-6 py-2 rounded-full glass hover:bg-white/20 transition-all">
             ورود
           </NuxtLink>
-          <NuxtLink to="/start" class="px-6 py-2 rounded-full bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg shadow-purple-500/30">
+          <NuxtLink to="/start" class="px-4 sm:px-6 py-2 rounded-full bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg shadow-purple-500/30 text-sm sm:text-base">
             شروع کنید
           </NuxtLink>
+
+          <button
+            type="button"
+            class="md:hidden w-10 h-10 rounded-full glass flex items-center justify-center shrink-0"
+            :aria-expanded="mobileOpen"
+            aria-label="باز کردن منو"
+            @click="mobileOpen = !mobileOpen"
+          >
+            <X v-if="mobileOpen" class="w-5 h-5" />
+            <Menu v-else class="w-5 h-5" />
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- Mobile menu -->
+    <Transition
+      enter-active-class="transition-all duration-200"
+      leave-active-class="transition-all duration-150"
+      enter-from-class="opacity-0 -translate-y-2"
+      leave-to-class="opacity-0 -translate-y-2"
+    >
+      <div v-if="mobileOpen" class="md:hidden glass-strong border-t border-white/10">
+        <div class="px-4 sm:px-6 py-4 flex flex-col gap-1">
+          <NuxtLink
+            v-for="link in navLinks"
+            :key="link.to"
+            :to="link.to"
+            class="px-3 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            {{ link.label }}
+          </NuxtLink>
+          <NuxtLink to="/login" class="px-3 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
+            ورود
+          </NuxtLink>
+        </div>
+      </div>
+    </Transition>
   </nav>
 </template>

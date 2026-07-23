@@ -16,7 +16,7 @@ import { Target, Rocket } from 'lucide-vue-next'
 
           <div class="space-y-5">
             <div class="flex gap-4">
-              <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+              <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center shrink-0">
                 <Target class="w-6 h-6 text-purple-400" />
               </div>
               <div>
@@ -25,7 +25,7 @@ import { Target, Rocket } from 'lucide-vue-next'
               </div>
             </div>
             <div class="flex gap-4">
-              <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+              <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center shrink-0">
                 <Rocket class="w-6 h-6 text-blue-400" />
               </div>
               <div>

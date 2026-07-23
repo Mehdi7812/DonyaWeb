@@ -63,7 +63,7 @@ async function handleSubmit() {
       </h2>
 
       <div class="px-4 py-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm flex items-start gap-2">
-        <AlertTriangle class="w-4 h-4 mt-0.5 flex-shrink-0" />
+        <AlertTriangle class="w-4 h-4 mt-0.5 shrink-0" />
         <span>پس از انتقال مالکیت، دسترسی شما به سرویس و امکان مدیریت آن قطع خواهد شد. این عملیات غیرقابل بازگشت است.</span>
       </div>
 
@@ -98,7 +98,7 @@ async function handleSubmit() {
         </div>
 
         <label class="flex items-start gap-3 text-sm text-gray-300 cursor-pointer">
-          <input v-model="confirmTransfer" type="checkbox" class="mt-0.5 w-5 h-5 rounded border-white/20 bg-white/10 text-purple-500 focus:ring-purple-500/50 focus:ring-offset-0 flex-shrink-0">
+          <input v-model="confirmTransfer" type="checkbox" class="mt-0.5 w-5 h-5 rounded border-white/20 bg-white/10 text-purple-500 focus:ring-purple-500/50 focus:ring-offset-0 shrink-0">
           <span>متوجه هستم که با انتقال مالکیت، دسترسی من به این سرویس قطع می‌شود و این عملیات قابل بازگشت نیست.</span>
         </label>
 

@@ -60,7 +60,7 @@ async function handleTopup() {
   <div class="max-w-3xl mx-auto space-y-6">
     <div class="glass-card rounded-3xl p-6 sm:p-8 flex items-center justify-between gap-6">
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+        <div class="w-14 h-14 rounded-2xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center shrink-0">
           <Wallet class="w-7 h-7 text-white" />
         </div>
         <div>

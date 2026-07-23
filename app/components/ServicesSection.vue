@@ -9,7 +9,8 @@ const services = [
     features: ['پنل مدیریت cPanel', 'بک‌آپ خودکار روزانه', 'پهنای باند نامحدود'],
     color: 'purple',
     button: 'مشاهده پلن‌ها',
-    outline: true
+    outline: true,
+    to: '/cloudhosting'
   },
   {
     icon: Cpu,
@@ -19,7 +20,8 @@ const services = [
     color: 'blue',
     button: 'شروع از ۲۹۰,۰۰۰ تومان',
     outline: false,
-    badge: 'محبوب'
+    badge: 'محبوب',
+    to: '/vps'
   },
   {
     icon: HardDrive,
@@ -28,7 +30,8 @@ const services = [
     features: ['دسترسی فیزیکی (IPMI)', 'RAID سخت‌افزاری', 'DDOS Protection'],
     color: 'pink',
     button: 'مشاوره رایگان',
-    outline: true
+    outline: true,
+    to: '/dedicatedserver'
   }
 ]
 
@@ -91,20 +94,22 @@ const colorMap = {
               <CheckCircle class="w-5 h-5" :class="colorMap[service.color].li" /> {{ f }}
             </li>
           </ul>
-          <button
+          <NuxtLink
             v-if="service.outline"
-            class="w-full py-3 rounded-xl border transition-all font-medium"
+            :to="service.to"
+            class="block text-center w-full py-3 rounded-xl border transition-all font-medium"
             :class="colorMap[service.color].btnOutline"
           >
             {{ service.button }}
-          </button>
-          <button
+          </NuxtLink>
+          <NuxtLink
             v-else
-            class="w-full py-3 rounded-xl bg-linear-to-r transition-all font-medium shadow-lg"
+            :to="service.to"
+            class="block text-center w-full py-3 rounded-xl bg-linear-to-r transition-all font-medium shadow-lg"
             :class="colorMap[service.color].btnSolid"
           >
             {{ service.button }}
-          </button>
+          </NuxtLink>
         </div>
       </div>
     </div>

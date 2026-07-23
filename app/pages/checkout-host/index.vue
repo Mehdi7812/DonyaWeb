@@ -61,7 +61,7 @@ function toggleAddon(id) {
 
 // --- Domain ---
 const domainOption = ref('existing') // 'existing' | 'later'
-const domain = ref('')
+const domain = ref(typeof route.query.domain === 'string' ? route.query.domain : '')
 
 // --- Billing type ---
 const billingType = ref('individual') // 'individual' | 'company'

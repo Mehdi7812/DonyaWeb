@@ -100,7 +100,7 @@ async function handleSubmit() {
           </div>
 
           <label class="flex items-start gap-3 text-sm text-gray-300 cursor-pointer">
-            <input v-model="agree" type="checkbox" class="mt-0.5 w-5 h-5 rounded border-white/20 bg-white/10 text-purple-500 focus:ring-purple-500/50 focus:ring-offset-0 flex-shrink-0">
+            <input v-model="agree" type="checkbox" class="mt-0.5 w-5 h-5 rounded border-white/20 bg-white/10 text-purple-500 focus:ring-purple-500/50 focus:ring-offset-0 shrink-0">
             <span>تأیید می‌کنم دامنه قفل نیست، حداقل ۶۰ روز از ثبت/انتقال قبلی آن گذشته و کد انتقال معتبر است.</span>
           </label>
 

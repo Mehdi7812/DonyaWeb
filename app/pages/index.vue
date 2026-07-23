@@ -10,5 +10,9 @@ useHead({
     <ServicesSection />
     <FeaturesSection />
     <PricingSection />
+    <TestimonialsSection />
+    <BlogSection />
+    <FaqSection />
+    <AboutCta />
   </div>
 </template>

@@ -50,7 +50,7 @@ const { tickets } = useDashboard()
         </div>
 
         <DashboardStatusBadge :status="t.status" />
-        <ChevronLeft class="w-5 h-5 text-gray-500 flex-shrink-0" />
+        <ChevronLeft class="w-5 h-5 text-gray-500 shrink-0" />
       </NuxtLink>
     </div>
   </div>

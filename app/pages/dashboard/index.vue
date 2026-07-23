@@ -23,7 +23,7 @@ const recentTickets = getRecentTickets()
       </div>
       <NuxtLink
         to="/start"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold shadow-lg shadow-purple-500/30 flex-shrink-0"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold shadow-lg shadow-purple-500/30 shrink-0"
       >
         <Plus class="w-5 h-5" />
         خرید سرویس جدید
