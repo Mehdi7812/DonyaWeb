@@ -1,6 +1,6 @@
 <script setup>
 import { Menu, Bell, ChevronDown, CheckCheck, CreditCard, Server, MessageSquare } from 'lucide-vue-next'
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { computed, ref, nextTick, onBeforeUnmount } from 'vue'
 
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
 const route = useRoute()
@@ -9,8 +9,14 @@ const { user } = useDashboard()
 const menuOpen = ref(false)
 const notifOpen = ref(false)
 
-const menuRef = ref(null)
-const notifRef = ref(null)
+// دکمه‌های trigger (برای محاسبه موقعیت) و خودِ پنل‌های teleport‌شده (برای تشخیص کلیک بیرون)
+const menuTriggerEl = ref(null)
+const menuPanelEl = ref(null)
+const notifTriggerEl = ref(null)
+const notifPanelEl = ref(null)
+
+const menuPanelStyle = ref({})
+const notifPanelStyle = ref({})
 
 // ---- اعلانات ----
 const notifications = ref([
@@ -48,14 +54,75 @@ const notifications = ref([
 
 const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
 
-function toggleNotif() {
-  notifOpen.value = !notifOpen.value
-  if (notifOpen.value) menuOpen.value = false
+// موقعیت پنل رو نسبت به viewport (fixed) از روی مختصات واقعی دکمه‌ی trigger محاسبه می‌کنیم
+// چون پنل با Teleport بیرون از هدر رندر می‌شه، دیگه محدود به stacking context هدر/کارت‌ها نیست
+function computePanelStyle(triggerEl, widthPx) {
+  if (!triggerEl) return {}
+  const rect = triggerEl.getBoundingClientRect()
+  const width = widthPx || rect.width
+  let left = rect.right - width
+  // جلوگیری از خروج پنل از لبه‌ی چپ صفحه
+  left = Math.max(8, left)
+  return {
+    position: 'fixed',
+    top: `${rect.bottom + 8}px`,
+    left: `${left}px`,
+    width: `${width}px`
+  }
 }
 
-function toggleMenu() {
+function updateNotifPosition() {
+  notifPanelStyle.value = computePanelStyle(notifTriggerEl.value, Math.min(352, window.innerWidth - 16))
+}
+
+function updateMenuPosition() {
+  menuPanelStyle.value = computePanelStyle(menuTriggerEl.value, 192)
+}
+
+function addTrackingListeners(updateFn) {
+  window.addEventListener('scroll', updateFn, true)
+  window.addEventListener('resize', updateFn)
+}
+
+function removeTrackingListeners(updateFn) {
+  window.removeEventListener('scroll', updateFn, true)
+  window.removeEventListener('resize', updateFn)
+}
+
+async function toggleNotif() {
+  menuOpen.value = false
+  notifOpen.value = !notifOpen.value
+  if (notifOpen.value) {
+    await nextTick()
+    updateNotifPosition()
+    addTrackingListeners(updateNotifPosition)
+  } else {
+    removeTrackingListeners(updateNotifPosition)
+  }
+}
+
+async function toggleMenu() {
+  notifOpen.value = false
   menuOpen.value = !menuOpen.value
-  if (menuOpen.value) notifOpen.value = false
+  if (menuOpen.value) {
+    await nextTick()
+    updateMenuPosition()
+    addTrackingListeners(updateMenuPosition)
+  } else {
+    removeTrackingListeners(updateMenuPosition)
+  }
+}
+
+function closeNotif() {
+  if (!notifOpen.value) return
+  notifOpen.value = false
+  removeTrackingListeners(updateNotifPosition)
+}
+
+function closeMenu() {
+  if (!menuOpen.value) return
+  menuOpen.value = false
+  removeTrackingListeners(updateMenuPosition)
 }
 
 function markAllRead() {
@@ -64,18 +131,35 @@ function markAllRead() {
 
 function openNotification(notif) {
   notif.read = true
-  notifOpen.value = false
+  closeNotif()
   if (notif.to) navigateTo(notif.to)
 }
 
-// ---- بستن با کلیک بیرون ----
+// ---- بستن با کلیک بیرون (هم trigger و هم پنل teleport‌شده رو چک می‌کنیم) ----
 function handleClickOutside(e) {
-  if (menuRef.value && !menuRef.value.contains(e.target)) menuOpen.value = false
-  if (notifRef.value && !notifRef.value.contains(e.target)) notifOpen.value = false
+  if (
+    menuOpen.value &&
+    !menuTriggerEl.value?.contains(e.target) &&
+    !menuPanelEl.value?.contains(e.target)
+  ) {
+    closeMenu()
+  }
+  if (
+    notifOpen.value &&
+    !notifTriggerEl.value?.contains(e.target) &&
+    !notifPanelEl.value?.contains(e.target)
+  ) {
+    closeNotif()
+  }
 }
 
-onMounted(() => document.addEventListener('click', handleClickOutside))
-onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
+document.addEventListener('click', handleClickOutside)
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+  removeTrackingListeners(updateNotifPosition)
+  removeTrackingListeners(updateMenuPosition)
+})
 
 // ---- عنوان صفحه ----
 const titleMap = {
@@ -113,8 +197,9 @@ const pageTitle = computed(() => {
 
     <div class="flex items-center gap-3 sm:gap-4">
       <!-- اعلانات -->
-      <div ref="notifRef" class="relative">
+      <div class="relative">
         <button
+          ref="notifTriggerEl"
           type="button"
           class="relative w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/20 transition-all"
           @click="toggleNotif"
@@ -123,72 +208,77 @@ const pageTitle = computed(() => {
           <span v-if="unreadCount > 0" class="absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
         </button>
 
-        <Transition name="fade">
-          <div
-            v-if="notifOpen"
-            class="dropdown-panel absolute left-0 mt-2 w-80 sm:w-88 rounded-xl overflow-hidden text-sm"
-          >
-            <!-- هدر پنل -->
-            <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
-              <span class="font-bold">اعلانات</span>
-              <button
-                v-if="unreadCount > 0"
-                type="button"
-                class="flex items-center gap-1 text-xs text-purple-400 hover:text-purple-300 transition-colors"
-                @click="markAllRead"
-              >
-                <CheckCheck class="w-3.5 h-3.5" />
-                خواندن همه
-              </button>
-            </div>
-
-            <!-- لیست اعلانات -->
-            <div class="max-h-80 overflow-y-auto">
-              <template v-if="notifications.length">
+        <!-- با Teleport بیرون از هدر رندر می‌شه تا هیچ کارتی با backdrop-filter نتونه روش بیفته -->
+        <Teleport to="body">
+          <Transition name="fade">
+            <div
+              v-if="notifOpen"
+              ref="notifPanelEl"
+              class="dropdown-panel rounded-xl overflow-hidden text-sm"
+              :style="notifPanelStyle"
+            >
+              <!-- هدر پنل -->
+              <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <span class="font-bold">اعلانات</span>
                 <button
-                  v-for="notif in notifications"
-                  :key="notif.id"
+                  v-if="unreadCount > 0"
                   type="button"
-                  class="w-full flex items-start gap-3 px-4 py-3 text-right hover:bg-white/10 transition-all"
-                  :class="{ 'opacity-60': notif.read }"
-                  @click="openNotification(notif)"
+                  class="flex items-center gap-1 text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                  @click="markAllRead"
                 >
-                  <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" :class="notif.color">
-                    <component :is="notif.icon" class="w-4.5 h-4.5" />
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2">
-                      <span class="font-semibold text-white">{{ notif.title }}</span>
-                      <span v-if="!notif.read" class="w-1.5 h-1.5 rounded-full bg-pink-500shrink-0" />
-                    </div>
-                    <p class="text-gray-400 text-xs mt-0.5 truncate">{{ notif.text }}</p>
-                    <span class="text-gray-500 text-[11px] mt-1 block">{{ notif.time }}</span>
-                  </div>
+                  <CheckCheck class="w-3.5 h-3.5" />
+                  خواندن همه
                 </button>
-              </template>
-              <div v-else class="py-10 text-center text-gray-500">
-                <Bell class="w-8 h-8 mx-auto mb-2 opacity-40" />
-                اعلان جدیدی ندارید
+              </div>
+
+              <!-- لیست اعلانات -->
+              <div class="max-h-80 overflow-y-auto scrollbar-thin">
+                <template v-if="notifications.length">
+                  <button
+                    v-for="notif in notifications"
+                    :key="notif.id"
+                    type="button"
+                    class="w-full flex items-start gap-3 px-4 py-3 text-right hover:bg-white/10 transition-all"
+                    :class="{ 'opacity-60': notif.read }"
+                    @click="openNotification(notif)"
+                  >
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" :class="notif.color">
+                      <component :is="notif.icon" class="w-4.5 h-4.5" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-white">{{ notif.title }}</span>
+                        <span v-if="!notif.read" class="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" />
+                      </div>
+                      <p class="text-gray-400 text-xs mt-0.5 truncate">{{ notif.text }}</p>
+                      <span class="text-gray-500 text-[11px] mt-1 block">{{ notif.time }}</span>
+                    </div>
+                  </button>
+                </template>
+                <div v-else class="py-10 text-center text-gray-500">
+                  <Bell class="w-8 h-8 mx-auto mb-2 opacity-40" />
+                  اعلان جدیدی ندارید
+                </div>
+              </div>
+
+              <!-- فوتر پنل -->
+              <div class="border-t border-white/10 p-2">
+                <NuxtLink
+                  to="/dashboard/notifications"
+                  class="block text-center px-4 py-2 rounded-lg hover:bg-white/10 text-purple-400 transition-all"
+                  @click="closeNotif"
+                >
+                  مشاهده همه اعلانات
+                </NuxtLink>
               </div>
             </div>
-
-            <!-- فوتر پنل -->
-            <div class="border-t border-white/10 p-2">
-              <NuxtLink
-                to="/dashboard/notifications"
-                class="block text-center px-4 py-2 rounded-lg hover:bg-white/10 text-purple-400 transition-all"
-                @click="notifOpen = false"
-              >
-                مشاهده همه اعلانات
-              </NuxtLink>
-            </div>
-          </div>
-        </Transition>
+          </Transition>
+        </Teleport>
       </div>
 
       <!-- منوی کاربر -->
-      <div ref="menuRef" class="relative">
-        <button type="button" class="flex items-center gap-2" @click="toggleMenu">
+      <div class="relative">
+        <button ref="menuTriggerEl" type="button" class="flex items-center gap-2" @click="toggleMenu">
           <div class="w-9 h-9 rounded-full bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center text-xs font-bold shrink-0">
             {{ user.initials }}
           </div>
@@ -196,17 +286,21 @@ const pageTitle = computed(() => {
           <ChevronDown class="w-4 h-4 text-gray-400 transition-transform" :class="{ 'rotate-180': menuOpen }" />
         </button>
 
-        <Transition name="fade">
-          <div
-            v-if="menuOpen"
-            class="dropdown-panel absolute left-0 mt-2 w-48 rounded-xl p-2 text-sm"
-            @click="menuOpen = false"
-          >
-            <NuxtLink to="/dashboard/account" class="block px-4 py-2 rounded-lg hover:bg-white/10 transition-all">حساب کاربری</NuxtLink>
-            <NuxtLink to="/" class="block px-4 py-2 rounded-lg hover:bg-white/10 transition-all">بازگشت به سایت</NuxtLink>
-            <button type="button" class="w-full text-right px-4 py-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-all">خروج</button>
-          </div>
-        </Transition>
+        <Teleport to="body">
+          <Transition name="fade">
+            <div
+              v-if="menuOpen"
+              ref="menuPanelEl"
+              class="dropdown-panel rounded-xl p-2 text-sm"
+              :style="menuPanelStyle"
+              @click="closeMenu"
+            >
+              <NuxtLink to="/dashboard/account" class="block px-4 py-2 rounded-lg hover:bg-white/10 transition-all">حساب کاربری</NuxtLink>
+              <NuxtLink to="/" class="block px-4 py-2 rounded-lg hover:bg-white/10 transition-all">بازگشت به سایت</NuxtLink>
+              <button type="button" class="w-full text-right px-4 py-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-all">خروج</button>
+            </div>
+          </Transition>
+        </Teleport>
       </div>
     </div>
   </header>

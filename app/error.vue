@@ -46,7 +46,7 @@ function handleGoHome() {
           بازگشت به صفحه اصلی
         </button>
         <NuxtLink
-          to="/contact"
+          to="/contact-us"
           class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition-all font-medium"
         >
           <ArrowRight class="w-5 h-5" />
