@@ -128,7 +128,7 @@ function scrollToTop() {
           <h4 class="font-bold mb-4">ارتباط با ما</h4>
           <ul class="space-y-3 text-gray-400 text-sm">
             <li>
-              <a href="tel:02112345678" class="flex items-center gap-2 hover:text-white transition-colors" dir="ltr">
+              <a href="tel:02112345678" class="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone class="w-4 h-4 shrink-0" />
                 <span dir="rtl">۰۲۱-۱۲۳۴۵۶۷۸</span>
               </a>
@@ -141,7 +141,7 @@ function scrollToTop() {
             </li>
             <li class="flex items-center gap-2">
               <MapPin class="w-4 h-4 shrink-0" />
-              تهران، خیابان انقلاب
+              آمل، خیابان هراز
             </li>
           </ul>
         </div>

@@ -63,7 +63,7 @@ function formatNumber(n) {
         <div class="sm:text-left">
           <p class="text-xs text-gray-500 mb-1">صادر شده توسط</p>
           <p class="font-medium">دنیا وب</p>
-          <p class="text-gray-400 text-sm">تهران، خیابان انقلاب</p>
+          <p class="text-gray-400 text-sm">آمل، خیابان هراز</p>
         </div>
       </div>
 

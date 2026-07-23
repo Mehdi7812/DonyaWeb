@@ -19,9 +19,9 @@ const channels = [
   {
     icon: MapPin,
     title: 'دفتر مرکزی',
-    detail: 'تهران، خیابان انقلاب',
+    detail: 'آمل، خیابان هراز',
     action: 'مسیریابی',
-    href: 'https://maps.google.com/?q=تهران، خیابان انقلاب'
+    href: 'https://maps.google.com/?q=آمل، خیابان هراز'
   }
 ]
 </script>
