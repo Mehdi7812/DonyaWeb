@@ -1,6 +1,6 @@
 <script setup>
 import { Menu, Bell, ChevronDown, CheckCheck, CreditCard, Server, MessageSquare } from 'lucide-vue-next'
-import { computed, ref, nextTick, onBeforeUnmount } from 'vue'
+import { computed, ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
 
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
 const route = useRoute()
@@ -95,6 +95,8 @@ async function toggleNotif() {
   if (notifOpen.value) {
     await nextTick()
     updateNotifPosition()
+    // اندازه‌گیری دوباره توی فریم بعد، چون بار اول ممکنه فونت/تصویر هنوز لود نشده باشه
+    requestAnimationFrame(updateNotifPosition)
     addTrackingListeners(updateNotifPosition)
   } else {
     removeTrackingListeners(updateNotifPosition)
@@ -107,6 +109,7 @@ async function toggleMenu() {
   if (menuOpen.value) {
     await nextTick()
     updateMenuPosition()
+    requestAnimationFrame(updateMenuPosition)
     addTrackingListeners(updateMenuPosition)
   } else {
     removeTrackingListeners(updateMenuPosition)
@@ -153,7 +156,9 @@ function handleClickOutside(e) {
   }
 }
 
-document.addEventListener('click', handleClickOutside)
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)

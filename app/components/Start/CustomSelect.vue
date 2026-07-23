@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick, onBeforeUnmount } from 'vue'
+import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { ChevronDown, Check } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -51,6 +51,9 @@ async function toggle() {
   if (open.value) {
     await nextTick()
     updatePosition()
+    // اندازه‌گیری دوباره توی فریم بعد، چون بار اول ممکنه فونت/تصویر هنوز لود نشده باشه
+    // و موقعیت واقعی کمی جابه‌جا بشه (باعث میشه دفعه‌ی اول کمی پایین‌تر باز بشه)
+    requestAnimationFrame(updatePosition)
     window.addEventListener('scroll', updatePosition, true)
     window.addEventListener('resize', updatePosition)
   } else {
@@ -83,8 +86,10 @@ function handleKeydown(event) {
   if (event.key === 'Escape') close()
 }
 
-document.addEventListener('click', handleClickOutside)
-document.addEventListener('keydown', handleKeydown)
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+  document.addEventListener('keydown', handleKeydown)
+})
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
@@ -126,7 +131,7 @@ onBeforeUnmount(() => {
           class="z-50 origin-top"
           :style="panelStyle"
         >
-          <ul class="glass-strong bg-[#12305c20]! rounded-xl p-1.5 max-h-60 overflow-y-auto scrollbar-thin border border-white/10 shadow-2xl shadow-black/40 space-y-0.5">
+          <ul class="glass-strong bg-[#12305c]! rounded-xl p-1.5 max-h-60 overflow-y-auto scrollbar-thin border border-white/10 shadow-2xl shadow-black/40 space-y-0.5">
             <li v-for="opt in normalizedOptions" :key="opt.value">
               <button
                 type="button"

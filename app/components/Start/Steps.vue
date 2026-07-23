@@ -34,7 +34,7 @@ const steps = [
 
 function goTo(anchor) {
   const el = document.getElementById(anchor)
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 </script>
 
@@ -42,7 +42,7 @@ function goTo(anchor) {
   <section class="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto pb-20">
     <div class="grid md:grid-cols-3 gap-6 relative">
       <!-- Connector line (desktop only) -->
-      <div class="hidden md:block absolute top-10 right-[16.66%] left-[16.66%] h-0.5 bg-white/10 -z-0">
+      <div class="hidden md:block absolute top-10 right-[16.66%] left-[16.66%] h-0.5 bg-white/10 z-0">
         <div
           class="h-full bg-linear-to-l from-purple-500 to-blue-500 transition-all duration-500"
           :style="{ width: currentStep >= 3 ? '100%' : currentStep === 2 ? '50%' : '0%' }"
