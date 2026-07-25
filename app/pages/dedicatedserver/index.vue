@@ -114,6 +114,7 @@ const form = ref({
 
 const submitted = ref(false);
 const isSubmitting = ref(false);
+const toast = useToast();
 
 async function handleSubmit() {
   isSubmitting.value = true;
@@ -122,6 +123,7 @@ async function handleSubmit() {
 
   isSubmitting.value = false;
   submitted.value = true;
+  toast.success('درخواست مشاوره شما با موفقیت ثبت شد.');
 }
 </script>
 

@@ -29,6 +29,8 @@ const normalizedOptions = computed(() =>
   props.options.map((o) => (typeof o === 'object' ? o : { label: o, value: o }))
 )
 
+const hasOptions = computed(() => normalizedOptions.value.length > 0)
+
 const selectedLabel = computed(() => {
   const found = normalizedOptions.value.find((o) => o.value === props.modelValue)
   return found ? found.label : ''
@@ -132,6 +134,15 @@ onBeforeUnmount(() => {
           :style="panelStyle"
         >
           <ul class="glass-strong bg-[#12305c]! rounded-xl p-1.5 max-h-60 overflow-y-auto scrollbar-thin border border-white/10 shadow-2xl shadow-black/40 space-y-0.5">
+            <li v-if="!hasOptions">
+              <button
+                type="button"
+                class="w-full cursor-default px-3.5 py-2.5 rounded-lg text-sm text-right text-gray-400"
+                disabled
+              >
+                هیچ ایتمی وجود ندارد
+              </button>
+            </li>
             <li v-for="opt in normalizedOptions" :key="opt.value">
               <button
                 type="button"

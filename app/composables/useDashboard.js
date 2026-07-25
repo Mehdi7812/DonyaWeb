@@ -1,4 +1,3 @@
-// app/composables/useDashboard.js
 // منبع داده موقت پنل کاربری — بعداً باید با API واقعی (احراز هویت، بیلینگ، تیکتینگ) جایگزین شود.
 
 const user = {
@@ -238,6 +237,46 @@ export function useDashboard() {
     return cdnZones.find((z) => z.domain === domain) || null
   }
 
+  // --- جهش‌های داده‌ی موقت (بعداً باید با فراخوانی API واقعی جایگزین شوند) ---
+
+  // افزودن سرویس جدید (بعد از تکمیل موفق یک سفارش)
+  function addService(service) {
+    services.unshift(service)
+    return service
+  }
+
+  // افزودن فاکتور جدید
+  function addInvoice(invoice) {
+    invoices.unshift(invoice)
+    return invoice
+  }
+
+  // علامت‌گذاری یک فاکتور موجود به‌عنوان پرداخت‌شده
+  function markInvoicePaid(id) {
+    const invoice = invoices.find((i) => i.id === id)
+    if (invoice) invoice.status = 'paid'
+    return invoice
+  }
+
+  function hasEnoughWalletBalance(amount) {
+    return wallet.balance >= amount
+  }
+
+  // کسر مبلغ از کیف پول داخلی + ثبت تراکنش در تاریخچه
+  function payFromWallet(amount, description) {
+    if (wallet.balance < amount) return false
+    wallet.balance -= amount
+    wallet.history.unshift({
+      id: `TXN-${Date.now().toString().slice(-6)}`,
+      type: 'usage',
+      amount: -amount,
+      date: 'اکنون',
+      status: 'paid',
+      method: description || 'پرداخت از کیف پول'
+    })
+    return true
+  }
+
   return {
     user,
     services,
@@ -256,6 +295,11 @@ export function useDashboard() {
     getRecentTickets,
     getDomainServices,
     getDomainDetails,
-    getCdnZoneByDomain
+    getCdnZoneByDomain,
+    addService,
+    addInvoice,
+    markInvoicePaid,
+    hasEnoughWalletBalance,
+    payFromWallet
   }
 }

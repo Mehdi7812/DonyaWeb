@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import {
   Check, ShieldCheck, CreditCard, Wallet, User, AtSign, Phone,
-  ChevronLeft, CheckCircle2, Building2, Tag, X, Loader2,
+  Building2, Tag, X, Loader2,
   RefreshCcw, Lock, Cpu, HardDrive, Wifi, Layers
 } from 'lucide-vue-next'
 
@@ -11,6 +11,8 @@ useHead({
 })
 
 const route = useRoute()
+const router = useRouter()
+const { createOrder, payWithWallet, hasEnoughWalletBalance } = useCheckout()
 
 // --- VPS plans ---
 const plans = {
@@ -112,46 +114,78 @@ const totalPrice = computed(() => afterCycleDiscount.value - couponDiscountAmoun
 
 // --- Validation + submit ---
 const isSubmitting = ref(false)
-const submitted = ref(false)
-const orderNumber = ref('')
-const errorMessage = ref('')
+const toast = useToast()
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const phoneRegex = /^09\d{9}$/
 
 async function submitOrder() {
-  errorMessage.value = ''
 
   if (!fullName.value.trim() || !email.value.trim() || !phone.value.trim()) {
-    errorMessage.value = 'لطفاً اطلاعات مشتری را کامل کنید'
+    toast.error('لطفاً اطلاعات مشتری را کامل کنید')
     return
   }
   if (!emailRegex.test(email.value.trim())) {
-    errorMessage.value = 'ایمیل وارد شده معتبر نیست'
+    toast.error('ایمیل وارد شده معتبر نیست')
     return
   }
   if (!phoneRegex.test(phone.value.trim())) {
-    errorMessage.value = 'شماره موبایل باید به‌صورت ۰۹xxxxxxxxx وارد شود'
+    toast.error('شماره موبایل باید به‌صورت ۰۹xxxxxxxxx وارد شود')
     return
   }
   if (billingType.value === 'company' && (!companyName.value.trim() || !nationalId.value.trim())) {
-    errorMessage.value = 'لطفاً نام شرکت و شناسه ملی را وارد کنید'
+    toast.error('لطفاً نام شرکت و شناسه ملی را وارد کنید')
     return
   }
   if (!acceptTerms.value) {
-    errorMessage.value = 'برای ادامه باید قوانین و مقررات را بپذیرید'
+    toast.error('برای ادامه باید قوانین و مقررات را بپذیرید')
     return
   }
 
   isSubmitting.value = true
   try {
-    // TODO: اتصال به API واقعی ثبت سفارش VPS و درگاه پرداخت
-    await new Promise((resolve) => setTimeout(resolve, 1200))
-    orderNumber.value = `VPS-${Date.now().toString().slice(-6)}`
-    submitted.value = true
+    // TODO: اتصال به API واقعی ثبت سفارش VPS (بعداً به‌جای createOrder محلی، یک سفارش روی سرور ساخته می‌شود)
+    const order = createOrder({
+      type: 'vps',
+      title: `${selectedPlan.value.name} (${activeOs.value.label})`,
+      identifier: 'در حال تخصیص IP',
+      amount: Math.round(totalPrice.value),
+      cycleLabel: activeCycle.value.label,
+      summary: [
+        { label: 'پلن', value: selectedPlan.value.name },
+        { label: 'سیستم‌عامل', value: activeOs.value.label },
+        ...(selectedAddons.value.length
+          ? [{ label: 'خدمات تکمیلی', value: addons.filter((a) => selectedAddons.value.includes(a.id)).map((a) => a.label).join('، ') }]
+          : [])
+      ],
+      customer: {
+        fullName: fullName.value.trim(),
+        email: email.value.trim(),
+        phone: phone.value.trim(),
+        billingType: billingType.value,
+        companyName: companyName.value.trim(),
+        nationalId: nationalId.value.trim()
+      },
+      paymentMethod: selectedPayment.value
+    })
+
+    if (selectedPayment.value === 'wallet') {
+      if (!hasEnoughWalletBalance(order.amount)) {
+        toast.error('موجودی کیف پول کافی نیست. روش «درگاه بانکی» را انتخاب کنید یا ابتدا کیف پول را شارژ کنید.')
+        isSubmitting.value = false
+        return
+      }
+      // TODO: اتصال به API واقعی کسر از کیف پول
+      await new Promise((resolve) => setTimeout(resolve, 900))
+      payWithWallet(order)
+      router.push({ path: '/payment/result', query: { order: order.id, status: 'success' } })
+      return
+    }
+
+    // TODO: اتصال به درگاه پرداخت واقعی — در حال حاضر به شبیه‌ساز داخلی هدایت می‌شود
+    router.push(`/payment/gateway/${order.id}`)
   } catch (err) {
-    errorMessage.value = 'ثبت سفارش با خطا مواجه شد، دوباره تلاش کنید'
-  } finally {
+    toast.error('ثبت سفارش با خطا مواجه شد، دوباره تلاش کنید')
     isSubmitting.value = false
   }
 }
@@ -160,27 +194,6 @@ async function submitOrder() {
 <template>
   <div>
     <section class="relative pt-40 pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-      <!-- Success state -->
-      <div v-if="submitted" class="max-w-lg mx-auto glass-card rounded-3xl p-10 text-center">
-        <CheckCircle2 class="w-16 h-16 text-green-400 mx-auto mb-5" />
-        <h1 class="text-2xl font-bold mb-2">سفارش شما ثبت شد</h1>
-        <p class="text-gray-400 mb-2">
-          سرور «{{ selectedPlan.name }}» با سیستم‌عامل {{ activeOs.label }} در حال آماده‌سازی است.
-          اطلاعات دسترسی به ایمیل {{ email }} ارسال می‌شود.
-        </p>
-        <p class="text-sm text-gray-500 mb-8">
-          شماره پیگیری سفارش: <span class="text-blue-300 font-mono" dir="ltr">{{ orderNumber }}</span>
-        </p>
-        <NuxtLink
-          to="/"
-          class="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold shadow-lg shadow-purple-500/30"
-        >
-          بازگشت به صفحه اصلی
-          <ChevronLeft class="w-4 h-4" />
-        </NuxtLink>
-      </div>
-
-      <template v-else>
         <div class="text-center mb-12">
           <h1 class="text-3xl md:text-4xl font-bold mb-3">سفارش <span class="gradient-text">سرور VPS</span></h1>
           <p class="text-gray-400">پلن، سیستم‌عامل و تنظیمات سرورتان را نهایی کنید</p>
@@ -292,13 +305,6 @@ async function submitOrder() {
             <!-- Customer info -->
             <div class="glass-card rounded-2xl p-6">
               <h2 class="font-bold mb-4">اطلاعات مشتری</h2>
-
-              <div
-                v-if="errorMessage"
-                class="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-              >
-                {{ errorMessage }}
-              </div>
 
               <div class="flex gap-3 mb-5">
                 <button
@@ -515,7 +521,6 @@ async function submitOrder() {
             </div>
           </div>
         </div>
-      </template>
     </section>
   </div>
 </template>

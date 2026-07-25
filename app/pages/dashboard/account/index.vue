@@ -30,35 +30,29 @@ const notifications = ref({
   marketing: false
 })
 
-const profileSaved = ref(false)
-const passwordSaved = ref(false)
-const passwordError = ref('')
 const isSavingProfile = ref(false)
 const isSavingPassword = ref(false)
+const toast = useToast()
 
 async function saveProfile() {
   isSavingProfile.value = true
-  profileSaved.value = false
   // TODO: اتصال به API واقعی به‌روزرسانی پروفایل
   await new Promise((resolve) => setTimeout(resolve, 600))
   isSavingProfile.value = false
-  profileSaved.value = true
+  toast.success('اطلاعات پروفایل با موفقیت ذخیره شد.')
 }
 
 async function savePassword() {
-  passwordError.value = ''
-  passwordSaved.value = false
-
   if (!passwords.value.current || !passwords.value.next || !passwords.value.confirm) {
-    passwordError.value = 'لطفاً همه فیلدها را تکمیل کنید'
+    toast.error('لطفاً همه فیلدها را تکمیل کنید')
     return
   }
   if (passwords.value.next !== passwords.value.confirm) {
-    passwordError.value = 'رمز عبور جدید و تکرار آن یکسان نیستند'
+    toast.error('رمز عبور جدید و تکرار آن یکسان نیستند')
     return
   }
   if (passwords.value.next.length < 8) {
-    passwordError.value = 'رمز عبور جدید باید حداقل ۸ کاراکتر باشد'
+    toast.error('رمز عبور جدید باید حداقل ۸ کاراکتر باشد')
     return
   }
 
@@ -66,7 +60,7 @@ async function savePassword() {
   // TODO: اتصال به API واقعی تغییر رمز عبور
   await new Promise((resolve) => setTimeout(resolve, 600))
   isSavingPassword.value = false
-  passwordSaved.value = true
+  toast.success('رمز عبور با موفقیت تغییر کرد.')
   passwords.value = { current: '', next: '', confirm: '' }
 }
 </script>
@@ -76,10 +70,6 @@ async function savePassword() {
     <!-- Profile -->
     <div class="glass-card rounded-3xl p-6 sm:p-8">
       <h2 class="text-lg font-bold mb-6">اطلاعات پروفایل</h2>
-
-      <div v-if="profileSaved" class="mb-6 px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-300 text-sm text-center">
-        اطلاعات پروفایل با موفقیت به‌روزرسانی شد.
-      </div>
 
       <form class="space-y-5" @submit.prevent="saveProfile">
         <div class="grid sm:grid-cols-2 gap-4">
@@ -130,13 +120,6 @@ async function savePassword() {
     <!-- Password -->
     <div class="glass-card rounded-3xl p-6 sm:p-8">
       <h2 class="text-lg font-bold mb-6">تغییر رمز عبور</h2>
-
-      <div v-if="passwordSaved" class="mb-6 px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-300 text-sm text-center">
-        رمز عبور با موفقیت تغییر کرد.
-      </div>
-      <div v-if="passwordError" class="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center">
-        {{ passwordError }}
-      </div>
 
       <form class="space-y-5" @submit.prevent="savePassword">
         <div>

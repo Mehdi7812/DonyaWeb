@@ -1,7 +1,8 @@
 <script setup>
+import { computed } from 'vue'
 import { Globe, Server, Cpu, RotateCcw, Settings } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   service: { type: Object, required: true }
 })
 
@@ -10,6 +11,23 @@ const typeIcons = {
   vps: Cpu,
   domain: Globe
 }
+
+// دامنه‌ها صفحه‌ی مدیریت اختصاصی خودشون رو دارن؛ هاست/VPS به صفحه‌ی جزئیات همون سرویس می‌رن
+const manageLink = computed(() => {
+  if (props.service.type === 'domain') {
+    return '/dashboard/domains'
+  }
+  return { path: `/dashboard/services/${props.service.id}` }
+})
+
+// همون منطقی که خودِ صفحه‌ی جزئیات سرویس برای دکمه‌ی تمدید استفاده می‌کنه، اینجا هم تکرار شده
+// تا رفتار «تمدید» از روی کارت با رفتار داخل صفحه‌ی مدیریت یکسان باشه
+const renewLink = computed(() => {
+  if (props.service.type === 'domain') {
+    return { path: '/dashboard/domains/renew', query: { domain: props.service.identifier } }
+  }
+  return { path: `/dashboard/services/${props.service.id}`, query: { action: 'renew' } }
+})
 </script>
 
 <template>
@@ -32,14 +50,20 @@ const typeIcons = {
     </div>
 
     <div class="flex items-center gap-2 shrink-0">
-      <button type="button" class="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition-all text-sm flex items-center gap-1.5">
+      <NuxtLink
+        :to="renewLink"
+        class="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition-all text-sm flex items-center gap-1.5"
+      >
         <RotateCcw class="w-4 h-4" />
         تمدید
-      </button>
-      <button type="button" class="px-4 py-2 rounded-lg bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all text-sm flex items-center gap-1.5">
+      </NuxtLink>
+      <NuxtLink
+        :to="manageLink"
+        class="px-4 py-2 rounded-lg bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all text-sm flex items-center gap-1.5"
+      >
         <Settings class="w-4 h-4" />
         مدیریت
-      </button>
+      </NuxtLink>
     </div>
   </div>
 </template>

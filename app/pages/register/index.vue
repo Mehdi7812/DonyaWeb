@@ -18,7 +18,7 @@ const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const acceptTerms = ref(false)
 const isLoading = ref(false)
-const errorMessage = ref('')
+const toast = useToast()
 
 const passwordStrength = computed(() => {
   const val = password.value
@@ -36,22 +36,20 @@ const passwordStrength = computed(() => {
 })
 
 async function handleRegister() {
-  errorMessage.value = ''
-
   if (!fullName.value || !email.value || !password.value || !confirmPassword.value) {
-    errorMessage.value = 'لطفاً همه فیلدها را تکمیل کنید'
+    toast.error('لطفاً همه فیلدها را تکمیل کنید')
     return
   }
   if (password.value !== confirmPassword.value) {
-    errorMessage.value = 'رمز عبور و تکرار آن یکسان نیستند'
+    toast.error('رمز عبور و تکرار آن یکسان نیستند')
     return
   }
   if (password.value.length < 8) {
-    errorMessage.value = 'رمز عبور باید حداقل ۸ کاراکتر باشد'
+    toast.error('رمز عبور باید حداقل ۸ کاراکتر باشد')
     return
   }
   if (!acceptTerms.value) {
-    errorMessage.value = 'برای ادامه باید قوانین و مقررات را بپذیرید'
+    toast.error('برای ادامه باید قوانین و مقررات را بپذیرید')
     return
   }
 
@@ -59,10 +57,11 @@ async function handleRegister() {
   try {
     // TODO: اتصال به API واقعی ثبت‌نام
     await new Promise((resolve) => setTimeout(resolve, 1200))
+    toast.success('ثبت‌نام با موفقیت انجام شد.')
     // در صورت موفقیت، کاربر را هدایت کنید
     // await navigateTo('/login')
   } catch (err) {
-    errorMessage.value = 'مشکلی در ثبت‌نام پیش آمد، دوباره تلاش کنید'
+    toast.error('مشکلی در ثبت‌نام پیش آمد، دوباره تلاش کنید')
   } finally {
     isLoading.value = false
   }
@@ -80,13 +79,6 @@ async function handleRegister() {
 
           <h1 class="text-2xl font-bold mb-1">ساخت حساب کاربری</h1>
           <p class="text-gray-400 text-sm">به جمع مشتریان دنیاوب بپیوندید</p>
-        </div>
-
-        <div
-          v-if="errorMessage"
-          class="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-        >
-          {{ errorMessage }}
         </div>
 
         <form class="space-y-5" @submit.prevent="handleRegister">

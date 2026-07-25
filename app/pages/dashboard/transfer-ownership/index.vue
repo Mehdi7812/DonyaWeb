@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Repeat, Server, AtSign, Check, AlertTriangle } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
@@ -9,27 +9,29 @@ useHead({
 })
 
 const { services } = useDashboard()
+const toast = useToast()
+
+const serviceOptions = computed(() =>
+  services.map((s) => ({ label: `${s.name} — ${s.identifier}`, value: s.id }))
+)
 
 const selectedId = ref(services[0]?.id || '')
 const recipientEmail = ref('')
 const confirmTransfer = ref(false)
-const errorMessage = ref('')
 const isSubmitting = ref(false)
 const isDone = ref(false)
 
 async function handleSubmit() {
-  errorMessage.value = ''
-
   if (!selectedId.value) {
-    errorMessage.value = 'لطفاً سرویس مورد نظر را انتخاب کنید'
+    toast.error('لطفاً سرویس مورد نظر را انتخاب کنید')
     return
   }
   if (!recipientEmail.value || !recipientEmail.value.includes('@')) {
-    errorMessage.value = 'لطفاً ایمیل معتبر دریافت‌کننده را وارد کنید'
+    toast.error('لطفاً ایمیل معتبر دریافت‌کننده را وارد کنید')
     return
   }
   if (!confirmTransfer.value) {
-    errorMessage.value = 'برای ادامه باید انتقال مالکیت را تأیید کنید'
+    toast.error('برای ادامه باید انتقال مالکیت را تأیید کنید')
     return
   }
 
@@ -38,6 +40,7 @@ async function handleSubmit() {
   await new Promise((resolve) => setTimeout(resolve, 900))
   isSubmitting.value = false
   isDone.value = true
+  toast.success('درخواست انتقال مالکیت با موفقیت ارسال شد.')
 }
 </script>
 
@@ -67,18 +70,19 @@ async function handleSubmit() {
         <span>پس از انتقال مالکیت، دسترسی شما به سرویس و امکان مدیریت آن قطع خواهد شد. این عملیات غیرقابل بازگشت است.</span>
       </div>
 
-      <div v-if="errorMessage" class="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center">
-        {{ errorMessage }}
-      </div>
-
       <form class="space-y-5" @submit.prevent="handleSubmit">
         <div>
           <label for="service" class="block text-sm text-gray-300 mb-2">انتخاب سرویس</label>
           <div class="relative">
             <Server class="w-5 h-5 text-gray-400 absolute top-1/2 -translate-y-1/2 right-4" />
-            <select id="service" v-model="selectedId" class="w-full pr-12 pl-4 py-3 rounded-xl input-glass text-white outline-none">
-              <option v-for="s in services" :key="s.id" :value="s.id" class="bg-slate-800">{{ s.name }} — {{ s.identifier }}</option>
-            </select>
+            <div class="pr-12">
+              <StartCustomSelect
+                id="service"
+                v-model="selectedId"
+                :options="serviceOptions"
+                placeholder="انتخاب سرویس"
+              />
+            </div>
           </div>
         </div>
 

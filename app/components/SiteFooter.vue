@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import {
   Phone, Mail, MapPin, Instagram, Twitter, Linkedin, Send,
-  ShieldCheck, Clock, Award, Zap, ArrowUp, Check
+  ShieldCheck, Clock, Award, Zap, ArrowUp
 } from 'lucide-vue-next'
 
 const productLinks = [
@@ -35,16 +35,19 @@ const socialLinks = [
 
 // فرم عضویت در خبرنامه
 const email = ref('')
-const subscribed = ref(false)
 const isSubmitting = ref(false)
+const toast = useToast()
 
 async function handleSubscribe() {
-  if (!email.value || !email.value.includes('@')) return
+  if (!email.value || !email.value.includes('@')) {
+    toast.error('لطفاً یک ایمیل معتبر وارد کنید')
+    return
+  }
   isSubmitting.value = true
   // TODO: اتصال به API واقعی ثبت ایمیل در خبرنامه
   await new Promise((resolve) => setTimeout(resolve, 700))
   isSubmitting.value = false
-  subscribed.value = true
+  toast.success('عضویت شما در خبرنامه با موفقیت ثبت شد.')
   email.value = ''
 }
 
@@ -86,7 +89,7 @@ function scrollToTop() {
           <h4 class="font-bold mb-3 text-sm">عضویت در خبرنامه</h4>
           <p class="text-gray-500 text-xs mb-3">از تخفیف‌ها و اخبار دنیاوب باخبر شوید.</p>
 
-          <form v-if="!subscribed" class="flex gap-2" @submit.prevent="handleSubscribe">
+          <form class="flex gap-2" @submit.prevent="handleSubscribe">
             <input
               v-model="email"
               type="email"
@@ -102,10 +105,6 @@ function scrollToTop() {
               <Send class="w-4 h-4" />
             </button>
           </form>
-          <div v-else class="flex items-center gap-2 text-green-400 text-sm px-4 py-2.5 rounded-xl bg-green-500/10 border border-green-500/30">
-            <Check class="w-4 h-4" />
-            با موفقیت عضو خبرنامه شدید
-          </div>
         </div>
 
         <div>

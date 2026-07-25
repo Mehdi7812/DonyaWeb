@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { ArrowRight, Send } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
@@ -21,18 +21,19 @@ const priorities = [
   { value: 'high', label: 'فوری' }
 ]
 
+const departmentOptions = computed(() => departments)
+const priorityOptions = computed(() => priorities)
+
 const subject = ref('')
 const department = ref('tech')
 const priority = ref('normal')
 const message = ref('')
 const isSubmitting = ref(false)
-const errorMessage = ref('')
+const toast = useToast()
 
 async function handleSubmit() {
-  errorMessage.value = ''
-
   if (!subject.value || !message.value) {
-    errorMessage.value = 'لطفاً موضوع و متن پیام را وارد کنید'
+    toast.error('لطفاً موضوع و متن پیام را وارد کنید')
     return
   }
 
@@ -40,6 +41,7 @@ async function handleSubmit() {
   try {
     // TODO: اتصال به API واقعی ثبت تیکت
     await new Promise((resolve) => setTimeout(resolve, 800))
+    toast.success('تیکت شما با موفقیت ثبت شد.')
     await navigateTo('/dashboard/tickets')
   } finally {
     isSubmitting.value = false
@@ -57,13 +59,6 @@ async function handleSubmit() {
     <div class="glass-card rounded-3xl p-6 sm:p-8">
       <h2 class="text-xl font-bold mb-6">ثبت تیکت جدید</h2>
 
-      <div
-        v-if="errorMessage"
-        class="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-      >
-        {{ errorMessage }}
-      </div>
-
       <form class="space-y-5" @submit.prevent="handleSubmit">
         <div>
           <label for="subject" class="block text-sm text-gray-300 mb-2">موضوع</label>
@@ -79,15 +74,21 @@ async function handleSubmit() {
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
             <label for="department" class="block text-sm text-gray-300 mb-2">بخش مربوطه</label>
-            <select id="department" v-model="department" class="w-full px-4 py-3 rounded-xl input-glass text-white outline-none">
-              <option v-for="d in departments" :key="d.value" :value="d.value" class="bg-slate-800">{{ d.label }}</option>
-            </select>
+            <StartCustomSelect
+              id="department"
+              v-model="department"
+              :options="departmentOptions"
+              placeholder="انتخاب بخش"
+            />
           </div>
           <div>
             <label for="priority" class="block text-sm text-gray-300 mb-2">اولویت</label>
-            <select id="priority" v-model="priority" class="w-full px-4 py-3 rounded-xl input-glass text-white outline-none">
-              <option v-for="p in priorities" :key="p.value" :value="p.value" class="bg-slate-800">{{ p.label }}</option>
-            </select>
+            <StartCustomSelect
+              id="priority"
+              v-model="priority"
+              :options="priorityOptions"
+              placeholder="انتخاب اولویت"
+            />
           </div>
         </div>
 

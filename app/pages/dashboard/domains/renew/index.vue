@@ -10,8 +10,13 @@ useHead({
 
 const route = useRoute()
 const { getDomainServices } = useDashboard()
+const toast = useToast()
 
 const domains = getDomainServices()
+
+const domainOptions = computed(() =>
+  domains.map((d) => ({ label: d.identifier, value: d.id }))
+)
 
 const selectedId = ref(
   domains.find((d) => d.identifier === route.query.domain)?.id || domains[0]?.id || ''
@@ -47,6 +52,7 @@ async function handleRenew() {
   await new Promise((resolve) => setTimeout(resolve, 900))
   isSubmitting.value = false
   isDone.value = true
+  toast.success(`دامنه ${selectedDomain.value.identifier} با موفقیت تمدید شد.`)
 }
 </script>
 
@@ -81,9 +87,14 @@ async function handleRenew() {
           <label for="domain" class="block text-sm text-gray-300 mb-2">انتخاب دامنه</label>
           <div class="relative">
             <Globe class="w-5 h-5 text-gray-400 absolute top-1/2 -translate-y-1/2 right-4" />
-            <select id="domain" v-model="selectedId" class="w-full pr-12 pl-4 py-3 rounded-xl input-glass text-white outline-none" dir="ltr">
-              <option v-for="d in domains" :key="d.id" :value="d.id" class="bg-slate-800">{{ d.identifier }}</option>
-            </select>
+            <div class="pr-12">
+              <StartCustomSelect
+                id="domain"
+                v-model="selectedId"
+                :options="domainOptions"
+                placeholder="انتخاب دامنه"
+              />
+            </div>
           </div>
         </div>
 

@@ -17,18 +17,17 @@ const step = ref(1) // 1: ایمیل, 2: کد تایید, 3: رمز جدید, 4:
 
 // --- Step 1: Email ---
 const email = ref('')
-const emailError = ref('')
 const isSendingOtp = ref(false)
+const toast = useToast()
 
 async function requestOtp() {
-  emailError.value = ''
   if (!email.value) {
-    emailError.value = 'لطفاً ایمیل خود را وارد کنید'
+    toast.error('لطفاً ایمیل خود را وارد کنید')
     return
   }
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)
   if (!isValidEmail) {
-    emailError.value = 'ایمیل وارد شده معتبر نیست'
+    toast.error('ایمیل وارد شده معتبر نیست')
     return
   }
 
@@ -44,7 +43,6 @@ async function requestOtp() {
 
 // --- Step 2: OTP ---
 const otpDigits = ref(['', '', '', '', ''])
-const otpError = ref('')
 const isVerifyingOtp = ref(false)
 const otpInputs = ref([])
 const resendSeconds = ref(0)
@@ -95,10 +93,8 @@ function handleOtpPaste(event) {
 const otpCode = computed(() => otpDigits.value.join(''))
 
 async function verifyOtp() {
-  otpError.value = ''
-
   if (otpCode.value.length < otpDigits.value.length) {
-    otpError.value = 'لطفاً کد را کامل وارد کنید'
+    toast.error('لطفاً کد را کامل وارد کنید')
     return
   }
 
@@ -108,7 +104,7 @@ async function verifyOtp() {
   isVerifyingOtp.value = false
 
   if (otpCode.value !== MOCK_OTP) {
-    otpError.value = 'کد وارد شده صحیح نیست'
+    toast.error('کد وارد شده صحیح نیست')
     return
   }
 
@@ -118,9 +114,9 @@ async function verifyOtp() {
 async function resendOtp() {
   if (resendSeconds.value > 0) return
   otpDigits.value = ['', '', '', '', '']
-  otpError.value = ''
   // TODO: اتصال به API واقعی ارسال مجدد کد
   await new Promise((resolve) => setTimeout(resolve, 500))
+  toast.info('کد تایید جدید ارسال شد.')
   startResendTimer()
   nextTick(() => focusOtpBox(0))
 }
@@ -129,7 +125,6 @@ function goBackToEmail() {
   step.value = 1
   clearInterval(resendTimer)
   otpDigits.value = ['', '', '', '', '']
-  otpError.value = ''
 }
 
 // --- Step 3: New password ---
@@ -137,7 +132,6 @@ const newPassword = ref('')
 const confirmPassword = ref('')
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
-const passwordError = ref('')
 const isResetting = ref(false)
 
 const passwordStrength = computed(() => {
@@ -156,18 +150,16 @@ const passwordStrength = computed(() => {
 })
 
 async function resetPassword() {
-  passwordError.value = ''
-
   if (!newPassword.value || !confirmPassword.value) {
-    passwordError.value = 'لطفاً هر دو فیلد را تکمیل کنید'
+    toast.error('لطفاً هر دو فیلد را تکمیل کنید')
     return
   }
   if (newPassword.value.length < 8) {
-    passwordError.value = 'رمز عبور باید حداقل ۸ کاراکتر باشد'
+    toast.error('رمز عبور باید حداقل ۸ کاراکتر باشد')
     return
   }
   if (newPassword.value !== confirmPassword.value) {
-    passwordError.value = 'رمز عبور و تکرار آن یکسان نیستند'
+    toast.error('رمز عبور و تکرار آن یکسان نیستند')
     return
   }
 
@@ -218,13 +210,6 @@ const stepLabels = ['ایمیل', 'کد تایید', 'رمز جدید']
 
         <!-- Step 1: Email -->
         <form v-if="step === 1" class="space-y-5" @submit.prevent="requestOtp">
-          <div
-            v-if="emailError"
-            class="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-          >
-            {{ emailError }}
-          </div>
-
           <div>
             <label for="email" class="block text-sm text-gray-300 mb-2">ایمیل</label>
             <div class="relative">
@@ -251,13 +236,6 @@ const stepLabels = ['ایمیل', 'کد تایید', 'رمز جدید']
 
         <!-- Step 2: OTP -->
         <form v-else-if="step === 2" class="space-y-5" @submit.prevent="verifyOtp">
-          <div
-            v-if="otpError"
-            class="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-          >
-            {{ otpError }}
-          </div>
-
           <p class="text-sm text-gray-400 text-center">
             کد ۵ رقمی ارسال‌شده به <span class="text-white font-medium" dir="ltr">{{ email }}</span> را وارد کنید
           </p>
@@ -309,13 +287,6 @@ const stepLabels = ['ایمیل', 'کد تایید', 'رمز جدید']
 
         <!-- Step 3: New password -->
         <form v-else-if="step === 3" class="space-y-5" @submit.prevent="resetPassword">
-          <div
-            v-if="passwordError"
-            class="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-          >
-            {{ passwordError }}
-          </div>
-
           <div>
             <label for="new-password" class="block text-sm text-gray-300 mb-2">رمز عبور جدید</label>
             <div class="relative">

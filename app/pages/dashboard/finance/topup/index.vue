@@ -9,6 +9,7 @@ useHead({
 })
 
 const { wallet } = useDashboard()
+const toast = useToast()
 
 const state = reactive({
   balance: wallet.balance,
@@ -20,7 +21,6 @@ const amount = ref(200000)
 const customAmount = ref('')
 const method = ref('gateway')
 const isSubmitting = ref(false)
-const successMessage = ref('')
 
 function selectQuick(a) {
   amount.value = a
@@ -32,9 +32,11 @@ function formatNumber(n) {
 }
 
 async function handleTopup() {
-  successMessage.value = ''
   const finalAmount = customAmount.value ? Number(customAmount.value) : amount.value
-  if (!finalAmount || finalAmount < 10000) return
+  if (!finalAmount || finalAmount < 10000) {
+    toast.error('حداقل مبلغ شارژ ۱۰,۰۰۰ تومان است')
+    return
+  }
 
   isSubmitting.value = true
   // TODO: اتصال به درگاه پرداخت واقعی (زرین‌پال / کارت بانکی)
@@ -51,7 +53,7 @@ async function handleTopup() {
   })
 
   isSubmitting.value = false
-  successMessage.value = `مبلغ ${formatNumber(finalAmount)} تومان با موفقیت به کیف پول اضافه شد.`
+  toast.success(`مبلغ ${formatNumber(finalAmount)} تومان با موفقیت به کیف پول اضافه شد.`)
   customAmount.value = ''
 }
 </script>
@@ -72,10 +74,6 @@ async function handleTopup() {
 
     <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
       <h2 class="text-lg font-bold">افزایش موجودی</h2>
-
-      <div v-if="successMessage" class="px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-300 text-sm text-center">
-        {{ successMessage }}
-      </div>
 
       <div>
         <label class="block text-sm text-gray-300 mb-3">مبلغ شارژ</label>

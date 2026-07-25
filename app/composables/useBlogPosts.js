@@ -1,4 +1,3 @@
-// app/composables/useBlogPosts.js
 // منبع داده موقت بلاگ — بعداً جای این را با فراخوانی API واقعی (مثلاً از یک CMS) عوض کنید.
 
 const categories = [

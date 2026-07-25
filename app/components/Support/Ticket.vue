@@ -24,13 +24,6 @@
           </div>
 
           <form v-else class="space-y-5" @submit.prevent="submitTicket">
-            <div
-              v-if="errorMessage"
-              class="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-            >
-              {{ errorMessage }}
-            </div>
-
             <div class="grid sm:grid-cols-2 gap-4">
               <div>
                 <label for="name" class="block text-sm text-gray-300 mb-2">نام و نام خانوادگی</label>
@@ -172,13 +165,11 @@ const subject = ref('')
 const message = ref('')
 const isSubmitting = ref(false)
 const submitted = ref(false)
-const errorMessage = ref('')
+const toast = useToast()
 
 async function submitTicket() {
-  errorMessage.value = ''
-
   if (!name.value || !email.value || !subject.value || !message.value) {
-    errorMessage.value = 'لطفاً همه فیلدها را تکمیل کنید'
+    toast.error('لطفاً همه فیلدها را تکمیل کنید')
     return
   }
 
@@ -187,12 +178,13 @@ async function submitTicket() {
     // TODO: اتصال به API واقعی ثبت تیکت
     await new Promise((resolve) => setTimeout(resolve, 1000))
     submitted.value = true
+    toast.success('تیکت شما با موفقیت ثبت شد.')
     name.value = ''
     email.value = ''
     subject.value = ''
     message.value = ''
   } catch (err) {
-    errorMessage.value = 'ارسال تیکت با خطا مواجه شد، دوباره تلاش کنید'
+    toast.error('ارسال تیکت با خطا مواجه شد، دوباره تلاش کنید')
   } finally {
     isSubmitting.value = false
   }

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import {
   User, AtSign, MessageSquare, Clock, Instagram, Twitter, Linkedin, Send
 } from 'lucide-vue-next'
@@ -11,19 +11,19 @@ const departments = [
   { value: 'other', label: 'سایر موارد' }
 ]
 
+const departmentOptions = computed(() => departments)
+
 const name = ref('')
 const email = ref('')
 const department = ref('sales')
 const message = ref('')
 const isSubmitting = ref(false)
 const submitted = ref(false)
-const errorMessage = ref('')
+const toast = useToast()
 
 async function handleSubmit() {
-  errorMessage.value = ''
-
   if (!name.value || !email.value || !message.value) {
-    errorMessage.value = 'لطفاً نام، ایمیل و پیام خود را وارد کنید'
+    toast.error('لطفاً نام، ایمیل و پیام خود را وارد کنید')
     return
   }
 
@@ -32,6 +32,7 @@ async function handleSubmit() {
     // TODO: اتصال به API واقعی ارسال پیام
     await new Promise((resolve) => setTimeout(resolve, 1000))
     submitted.value = true
+    toast.success('پیام شما با موفقیت ارسال شد.')
   } finally {
     isSubmitting.value = false
   }
@@ -66,13 +67,6 @@ async function handleSubmit() {
         </div>
 
         <form v-else class="space-y-5" @submit.prevent="handleSubmit">
-          <div
-            v-if="errorMessage"
-            class="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-          >
-            {{ errorMessage }}
-          </div>
-
           <div class="grid sm:grid-cols-2 gap-4">
             <div>
               <label for="contact-name" class="block text-sm text-gray-300 mb-2">نام و نام خانوادگی</label>
@@ -105,15 +99,12 @@ async function handleSubmit() {
 
           <div>
             <label for="department" class="block text-sm text-gray-300 mb-2">موضوع پیام</label>
-            <select
+            <StartCustomSelect
               id="department"
               v-model="department"
-              class="w-full px-4 py-3 rounded-xl input-glass text-white outline-none"
-            >
-              <option v-for="d in departments" :key="d.value" :value="d.value" class="bg-slate-800">
-                {{ d.label }}
-              </option>
-            </select>
+              :options="departmentOptions"
+              placeholder="انتخاب موضوع"
+            />
           </div>
 
           <div>

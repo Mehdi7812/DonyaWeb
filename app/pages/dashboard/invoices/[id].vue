@@ -1,10 +1,13 @@
 <script setup>
-import { ArrowRight, Download, Printer } from 'lucide-vue-next'
+import { ref } from 'vue'
+import { ArrowRight, Download, Printer, CreditCard, Loader2 } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
 
 const route = useRoute()
+const router = useRouter()
 const { getInvoiceById, user } = useDashboard()
+const { createOrder } = useCheckout()
 
 const invoice = getInvoiceById(route.params.id)
 
@@ -24,6 +27,24 @@ const totalAmount = amountNumber + taxAmount
 function formatNumber(n) {
   return n.toLocaleString('fa-IR')
 }
+
+// پرداخت فاکتورهای «در انتظار پرداخت» / «ناموفق» از همان مسیر شبیه‌ساز درگاه بانکی چک‌اوت‌ها
+const isPaying = ref(false)
+function payInvoice() {
+  isPaying.value = true
+  const order = createOrder({
+    type: 'invoice',
+    invoiceId: invoice.id,
+    title: `فاکتور ${invoice.id} (${invoice.service})`,
+    identifier: invoice.id,
+    amount: totalAmount,
+    cycleLabel: '',
+    summary: [{ label: 'شرح', value: invoice.service }],
+    customer: { fullName: user.name, email: user.email, phone: user.phone },
+    paymentMethod: 'gateway'
+  })
+  router.push(`/payment/gateway/${order.id}`)
+}
 </script>
 
 <template>
@@ -38,9 +59,20 @@ function formatNumber(n) {
           <Printer class="w-4 h-4" />
           چاپ
         </button>
-        <button type="button" class="px-4 py-2 rounded-lg bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all text-sm flex items-center gap-1.5">
+        <button type="button" class="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition-all text-sm flex items-center gap-1.5">
           <Download class="w-4 h-4" />
           دانلود PDF
+        </button>
+        <button
+          v-if="invoice.status !== 'paid'"
+          type="button"
+          :disabled="isPaying"
+          class="px-4 py-2 rounded-lg bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all text-sm flex items-center gap-1.5 disabled:opacity-60"
+          @click="payInvoice"
+        >
+          <Loader2 v-if="isPaying" class="w-4 h-4 animate-spin" />
+          <CreditCard v-else class="w-4 h-4" />
+          پرداخت فاکتور
         </button>
       </div>
     </div>

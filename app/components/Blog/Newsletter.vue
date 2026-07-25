@@ -3,12 +3,16 @@ import { ref } from 'vue'
 import { Mail } from 'lucide-vue-next'
 
 const email = ref('')
-const subscribed = ref(false)
+const toast = useToast()
 
 function handleSubscribe() {
-  if (!email.value) return
+  if (!email.value) {
+    toast.error('لطفاً ایمیل خود را وارد کنید')
+    return
+  }
   // TODO: اتصال به API واقعی خبرنامه
-  subscribed.value = true
+  toast.success('عضویت شما در خبرنامه با موفقیت ثبت شد!')
+  email.value = ''
 }
 </script>
 
@@ -23,11 +27,7 @@ function handleSubscribe() {
         <h2 class="text-2xl md:text-3xl font-bold mb-3">در خبرنامه دنیاوب عضو شوید</h2>
         <p class="text-gray-400 mb-8">مقالات جدید و اخبار محصولات را مستقیم در ایمیل‌تان دریافت کنید</p>
 
-        <div v-if="subscribed" class="max-w-xl mx-auto px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-300 text-sm">
-          عضویت شما با موفقیت ثبت شد!
-        </div>
-
-        <form v-else class="max-w-xl mx-auto flex flex-col sm:flex-row gap-3" @submit.prevent="handleSubscribe">
+        <form class="max-w-xl mx-auto flex flex-col sm:flex-row gap-3" @submit.prevent="handleSubscribe">
           <input
             v-model="email"
             type="email"

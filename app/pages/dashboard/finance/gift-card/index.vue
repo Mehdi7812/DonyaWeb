@@ -9,24 +9,20 @@ useHead({
 })
 
 const { giftCards } = useDashboard()
+const toast = useToast()
 
 const cards = reactive([...giftCards])
 
 const code = ref('')
 const isSubmitting = ref(false)
-const errorMessage = ref('')
-const successMessage = ref('')
 
 function formatNumber(n) {
   return n.toLocaleString('fa-IR')
 }
 
 async function redeem() {
-  errorMessage.value = ''
-  successMessage.value = ''
-
   if (!code.value.trim()) {
-    errorMessage.value = 'لطفاً کد کارت هدیه را وارد کنید'
+    toast.error('لطفاً کد کارت هدیه را وارد کنید')
     return
   }
 
@@ -37,7 +33,7 @@ async function redeem() {
 
   const exists = cards.some((c) => c.code.toLowerCase() === code.value.trim().toLowerCase())
   if (exists) {
-    errorMessage.value = 'این کارت هدیه قبلاً ثبت شده است'
+    toast.error('این کارت هدیه قبلاً ثبت شده است')
     return
   }
 
@@ -47,7 +43,7 @@ async function redeem() {
     status: 'active',
     issuedDate: 'همین الان'
   })
-  successMessage.value = 'کارت هدیه با موفقیت به حساب شما اضافه شد.'
+  toast.success('کارت هدیه با موفقیت به حساب شما اضافه شد.')
   code.value = ''
 }
 </script>
@@ -59,13 +55,6 @@ async function redeem() {
         <Gift class="w-5 h-5 text-purple-400" />
         فعال‌سازی کارت هدیه
       </h2>
-
-      <div v-if="successMessage" class="px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-300 text-sm text-center">
-        {{ successMessage }}
-      </div>
-      <div v-if="errorMessage" class="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center">
-        {{ errorMessage }}
-      </div>
 
       <form class="flex flex-col sm:flex-row gap-3" @submit.prevent="redeem">
         <input

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { Network, Activity, Gauge, ShieldCheck, Plus, Globe } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
@@ -23,7 +23,13 @@ function toggleZone(zone) {
 const showAddForm = ref(false)
 const newDomain = ref('')
 
-const availableDomains = domains.filter((d) => !zones.some((z) => z.domain === d.identifier))
+const availableDomains = computed(() =>
+  domains.filter((d) => !zones.some((z) => z.domain === d.identifier))
+)
+
+const availableDomainOptions = computed(() =>
+  availableDomains.value.map((d) => ({ label: d.identifier, value: d.identifier }))
+)
 
 function addZone() {
   if (!newDomain.value) return
@@ -59,10 +65,12 @@ function addZone() {
     <div v-if="showAddForm" class="glass-card rounded-2xl p-6 flex flex-col sm:flex-row gap-3 sm:items-end">
       <div class="flex-1">
         <label for="new-domain" class="block text-sm text-gray-300 mb-2">انتخاب دامنه</label>
-        <select id="new-domain" v-model="newDomain" class="w-full px-4 py-3 rounded-xl input-glass text-white outline-none" dir="ltr">
-          <option value="" disabled class="bg-slate-800">یک دامنه را انتخاب کنید</option>
-          <option v-for="d in availableDomains" :key="d.id" :value="d.identifier" class="bg-slate-800">{{ d.identifier }}</option>
-        </select>
+        <StartCustomSelect
+          id="new-domain"
+          v-model="newDomain"
+          :options="availableDomainOptions"
+          placeholder="یک دامنه را انتخاب کنید"
+        />
       </div>
       <button
         type="button"

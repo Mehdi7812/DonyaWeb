@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import {
   Check, ShieldCheck, CreditCard, Wallet, User, AtSign, Phone,
-  ChevronLeft, CheckCircle2, Building2, Tag, X, Loader2,
+  Building2, Tag, X, Loader2,
   RefreshCcw, Lock, Globe, ShieldOff, RotateCcw
 } from 'lucide-vue-next'
 
@@ -11,6 +11,8 @@ useHead({
 })
 
 const route = useRoute()
+const router = useRouter()
+const { createOrder, payWithWallet, hasEnoughWalletBalance } = useCheckout()
 
 // --- TLD price table (annual price) ---
 const tlds = {
@@ -21,6 +23,11 @@ const tlds = {
   '.io': 390000,
   '.co': 210000
 }
+
+const tldOptions = computed(() => Object.entries(tlds).map(([value, price]) => ({
+  value,
+  label: `${value} (${formatPrice(price)} تومان)`
+})))
 
 function splitDomain(full) {
   const match = Object.keys(tlds)
@@ -118,51 +125,81 @@ const totalPrice = computed(() => afterPeriodDiscount.value - couponDiscountAmou
 
 // --- Validation + submit ---
 const isSubmitting = ref(false)
-const submitted = ref(false)
-const orderNumber = ref('')
-const errorMessage = ref('')
+const toast = useToast()
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const phoneRegex = /^09\d{9}$/
 const domainRegex = /^[a-zA-Z0-9-]{2,63}$/
 
 async function submitOrder() {
-  errorMessage.value = ''
 
   if (!domainName.value.trim() || !domainRegex.test(domainName.value.trim())) {
-    errorMessage.value = 'نام دامنه معتبر نیست (فقط حروف انگلیسی، عدد و خط تیره)'
+    toast.error('نام دامنه معتبر نیست (فقط حروف انگلیسی، عدد و خط تیره)')
     return
   }
   if (!fullName.value.trim() || !email.value.trim() || !phone.value.trim()) {
-    errorMessage.value = 'لطفاً اطلاعات مالک دامنه را کامل کنید'
+    toast.error('لطفاً اطلاعات مالک دامنه را کامل کنید')
     return
   }
   if (!emailRegex.test(email.value.trim())) {
-    errorMessage.value = 'ایمیل وارد شده معتبر نیست'
+    toast.error('ایمیل وارد شده معتبر نیست')
     return
   }
   if (!phoneRegex.test(phone.value.trim())) {
-    errorMessage.value = 'شماره موبایل باید به‌صورت ۰۹xxxxxxxxx وارد شود'
+    toast.error('شماره موبایل باید به‌صورت ۰۹xxxxxxxxx وارد شود')
     return
   }
   if (billingType.value === 'company' && (!companyName.value.trim() || !nationalId.value.trim())) {
-    errorMessage.value = 'لطفاً نام شرکت و شناسه ملی را وارد کنید'
+    toast.error('لطفاً نام شرکت و شناسه ملی را وارد کنید')
     return
   }
   if (!acceptTerms.value) {
-    errorMessage.value = 'برای ادامه باید قوانین و مقررات را بپذیرید'
+    toast.error('برای ادامه باید قوانین و مقررات را بپذیرید')
     return
   }
 
   isSubmitting.value = true
   try {
-    // TODO: اتصال به API واقعی ثبت دامنه (WHOIS/Registrar) و درگاه پرداخت
-    await new Promise((resolve) => setTimeout(resolve, 1200))
-    orderNumber.value = `DOM-${Date.now().toString().slice(-6)}`
-    submitted.value = true
+    // TODO: اتصال به API واقعی ثبت دامنه (WHOIS/Registrar)
+    const order = createOrder({
+      type: 'domain',
+      title: fullDomain.value,
+      identifier: fullDomain.value,
+      amount: Math.round(totalPrice.value),
+      cycleLabel: activePeriod.value.label,
+      summary: [
+        { label: 'دامنه', value: fullDomain.value },
+        { label: 'مدت ثبت', value: activePeriod.value.label },
+        { label: 'تمدید خودکار', value: autoRenew.value ? 'فعال' : 'غیرفعال' }
+      ],
+      customer: {
+        fullName: fullName.value.trim(),
+        email: email.value.trim(),
+        phone: phone.value.trim(),
+        billingType: billingType.value,
+        companyName: companyName.value.trim(),
+        nationalId: nationalId.value.trim()
+      },
+      paymentMethod: selectedPayment.value
+    })
+
+    if (selectedPayment.value === 'wallet') {
+      if (!hasEnoughWalletBalance(order.amount)) {
+        toast.error('موجودی کیف پول کافی نیست. روش «درگاه بانکی» را انتخاب کنید یا ابتدا کیف پول را شارژ کنید.')
+        isSubmitting.value = false
+        return
+      }
+      // TODO: اتصال به API واقعی کسر از کیف پول
+      await new Promise((resolve) => setTimeout(resolve, 900))
+      payWithWallet(order)
+      router.push({ path: '/payment/result', query: { order: order.id, status: 'success' } })
+      return
+    }
+
+    // TODO: اتصال به درگاه پرداخت واقعی — در حال حاضر به شبیه‌ساز داخلی هدایت می‌شود
+    router.push(`/payment/gateway/${order.id}`)
   } catch (err) {
-    errorMessage.value = 'ثبت دامنه با خطا مواجه شد، دوباره تلاش کنید'
-  } finally {
+    toast.error('ثبت دامنه با خطا مواجه شد، دوباره تلاش کنید')
     isSubmitting.value = false
   }
 }
@@ -171,27 +208,6 @@ async function submitOrder() {
 <template>
   <div>
     <section class="relative pt-40 pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-      <!-- Success state -->
-      <div v-if="submitted" class="max-w-lg mx-auto glass-card rounded-3xl p-10 text-center">
-        <CheckCircle2 class="w-16 h-16 text-green-400 mx-auto mb-5" />
-        <h1 class="text-2xl font-bold mb-2">دامنه شما ثبت شد</h1>
-        <p class="text-gray-400 mb-2">
-          دامنه «<span dir="ltr">{{ fullDomain }}</span>» برای {{ activePeriod.years }} سال ثبت شد.
-          جزئیات فاکتور به ایمیل {{ email }} ارسال می‌شود.
-        </p>
-        <p class="text-sm text-gray-500 mb-8">
-          شماره پیگیری سفارش: <span class="text-purple-300 font-mono" dir="ltr">{{ orderNumber }}</span>
-        </p>
-        <NuxtLink
-          to="/"
-          class="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold shadow-lg shadow-purple-500/30"
-        >
-          بازگشت به صفحه اصلی
-          <ChevronLeft class="w-4 h-4" />
-        </NuxtLink>
-      </div>
-
-      <template v-else>
         <div class="text-center mb-12">
           <h1 class="text-3xl md:text-4xl font-bold mb-3">ثبت <span class="gradient-text">دامنه</span></h1>
           <p class="text-gray-400">دامنه، مدت ثبت و اطلاعات مالک را نهایی کنید</p>
@@ -206,13 +222,13 @@ async function submitOrder() {
                 <Globe class="w-5 h-5 text-purple-400" /> نام دامنه
               </h2>
               <div class="flex flex-col sm:flex-row gap-3">
-                <select
-                  v-model="selectedTld"
-                  dir="ltr"
-                  class="px-4 py-3 rounded-xl input-glass text-white outline-none sm:w-40"
-                >
-                  <option v-for="(price, ext) in tlds" :key="ext" :value="ext" class="bg-slate-800">{{ ext }}</option>
-                </select>
+                <div class="sm:w-48">
+                  <StartCustomSelect
+                    v-model="selectedTld"
+                    :options="tldOptions"
+                    placeholder="انتخاب پسوند"
+                  />
+                </div>
                 
                 <input
                   v-model="domainName"
@@ -296,13 +312,6 @@ async function submitOrder() {
             <!-- Registrant info -->
             <div class="glass-card rounded-2xl p-6">
               <h2 class="font-bold mb-4">اطلاعات مالک دامنه</h2>
-
-              <div
-                v-if="errorMessage"
-                class="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-              >
-                {{ errorMessage }}
-              </div>
 
               <div class="flex gap-3 mb-5">
                 <button
@@ -518,7 +527,6 @@ async function submitOrder() {
             </div>
           </div>
         </div>
-      </template>
     </section>
   </div>
 </template>

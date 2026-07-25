@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue'
 import { ArrowRight, RotateCcw, Settings, CheckCircle2 } from 'lucide-vue-next'
 
+definePageMeta({ layout: 'dashboard' })
+
 const route = useRoute()
 const router = useRouter()
 const { getServiceById } = useDashboard()
@@ -14,7 +16,7 @@ if (!service) {
 
 const isRenewMode = computed(() => route.query.action === 'renew')
 const isProcessing = ref(false)
-const successMessage = ref('')
+const toast = useToast()
 
 useHead({
   title: `${service.name} | مدیریت سرویس | دنیاوب`
@@ -35,10 +37,9 @@ function startRenew() {
 async function handleRenew() {
   if (isProcessing.value) return
   isProcessing.value = true
-  successMessage.value = ''
   await new Promise((resolve) => setTimeout(resolve, 900))
   isProcessing.value = false
-  successMessage.value = `درخواست تمدید ${service.type === 'hosting' ? 'هاست' : 'VPS'} «${service.name}» با موفقیت ثبت شد.`
+  toast.success(`درخواست تمدید ${service.type === 'hosting' ? 'هاست' : 'VPS'} «${service.name}» با موفقیت ثبت شد.`)
 }
 </script>
 
@@ -147,7 +148,6 @@ async function handleRenew() {
                 بازگشت به مدیریت
               </button>
             </div>
-            <p v-if="successMessage" class="text-sm text-green-300 mt-4">{{ successMessage }}</p>
           </div>
         </template>
       </section>

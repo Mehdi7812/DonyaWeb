@@ -15,13 +15,11 @@ const password = ref('')
 const showPassword = ref(false)
 const rememberMe = ref(false)
 const isLoading = ref(false)
-const errorMessage = ref('')
+const toast = useToast()
 
 async function handleLogin() {
-  errorMessage.value = ''
-
   if (!email.value || !password.value) {
-    errorMessage.value = 'لطفاً ایمیل و رمز عبور را وارد کنید'
+    toast.error('لطفاً ایمیل و رمز عبور را وارد کنید')
     return
   }
 
@@ -32,7 +30,7 @@ async function handleLogin() {
     // در صورت موفقیت، کاربر را به داشبورد هدایت کنید
     await navigateTo('/dashboard')
   } catch (err) {
-    errorMessage.value = 'ایمیل یا رمز عبور اشتباه است'
+    toast.error('ایمیل یا رمز عبور اشتباه است')
   } finally {
     isLoading.value = false
   }
@@ -50,13 +48,6 @@ async function handleLogin() {
 
           <h1 class="text-2xl font-bold mb-1">ورود به حساب کاربری</h1>
           <p class="text-gray-400 text-sm">به دنیاوب خوش آمدید</p>
-        </div>
-
-        <div
-          v-if="errorMessage"
-          class="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center"
-        >
-          {{ errorMessage }}
         </div>
 
         <form class="space-y-5" @submit.prevent="handleLogin">

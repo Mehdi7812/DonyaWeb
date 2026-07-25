@@ -9,23 +9,21 @@ useHead({
 })
 
 const { domainTransfers } = useDashboard()
+const toast = useToast()
 
 const domainName = ref('')
 const authCode = ref('')
 const agree = ref(false)
-const errorMessage = ref('')
 const isSubmitting = ref(false)
 const isDone = ref(false)
 
 async function handleSubmit() {
-  errorMessage.value = ''
-
   if (!domainName.value || !authCode.value) {
-    errorMessage.value = 'لطفاً نام دامنه و کد انتقال (Auth/EPP Code) را وارد کنید'
+    toast.error('لطفاً نام دامنه و کد انتقال (Auth/EPP Code) را وارد کنید')
     return
   }
   if (!agree.value) {
-    errorMessage.value = 'برای ادامه باید قوانین انتقال دامنه را بپذیرید'
+    toast.error('برای ادامه باید قوانین انتقال دامنه را بپذیرید')
     return
   }
 
@@ -34,6 +32,7 @@ async function handleSubmit() {
   await new Promise((resolve) => setTimeout(resolve, 900))
   isSubmitting.value = false
   isDone.value = true
+  toast.success('درخواست انتقال دامنه با موفقیت ثبت شد.')
 }
 </script>
 
@@ -63,10 +62,6 @@ async function handleSubmit() {
           <ArrowLeftRight class="w-5 h-5 text-purple-400" />
           انتقال دامنه به دنیا وب
         </h2>
-
-        <div v-if="errorMessage" class="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm text-center">
-          {{ errorMessage }}
-        </div>
 
         <form class="space-y-5" @submit.prevent="handleSubmit">
           <div>
