@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from 'vue'
-import { Globe, ShieldCheck, Lock, Unlock, RotateCcw, ArrowLeftRight, Plus, Server } from 'lucide-vue-next'
+import { Globe, ShieldCheck, Lock, Unlock, RotateCcw, ArrowLeftRight, Plus, Server, Settings } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
 
@@ -128,18 +128,27 @@ function toggle(id, key) {
           </button>
         </div>
 
-        <div class="pt-4 border-t border-white/10">
-          <p class="text-xs text-gray-500 mb-2 flex items-center gap-1.5"><Server class="w-3.5 h-3.5" /> نیم‌سرورها (DNS)</p>
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-for="ns in localSettings[d.id].nameservers"
-              :key="ns"
-              class="px-3 py-1.5 rounded-lg bg-white/5 text-xs text-gray-300 font-mono"
-              dir="ltr"
-            >
-              {{ ns }}
-            </span>
+        <div class="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p class="text-xs text-gray-500 mb-2 flex items-center gap-1.5"><Server class="w-3.5 h-3.5" /> نیم‌سرورها (DNS)</p>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="ns in localSettings[d.id].nameservers"
+                :key="ns"
+                class="px-3 py-1.5 rounded-lg bg-white/5 text-xs text-gray-300 font-mono"
+                dir="ltr"
+              >
+                {{ ns }}
+              </span>
+            </div>
           </div>
+          <NuxtLink
+            :to="`/dashboard/domains/dns?domain=${d.identifier}`"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition-all text-sm shrink-0"
+          >
+            <Settings class="w-4 h-4" />
+            مدیریت رکوردهای DNS
+          </NuxtLink>
         </div>
       </div>
     </div>
