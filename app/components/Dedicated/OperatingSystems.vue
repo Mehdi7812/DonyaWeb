@@ -3,6 +3,20 @@ import { ref } from "vue";
 import { CheckCircle2, Monitor, Server } from "lucide-vue-next";
 
 const selected = ref("Ubuntu 24.04");
+const requestNote = useDedicatedRequest();
+const toast = useToast();
+
+function changeVersion() {
+  // برگشت به بالای گرید سیستم‌عامل‌ها برای انتخاب مجدد
+  if (typeof document === "undefined") return;
+  document.getElementById("os-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function continueOrder() {
+  requestNote.value = `درخواست سرور اختصاصی با سیستم‌عامل ${selected.value}`;
+  toast.success(`سیستم‌عامل ${selected.value} انتخاب شد؛ فرم درخواست را تکمیل کنید.`);
+  scrollToDedicatedConsultation();
+}
 
 const systems = [
   {
@@ -71,7 +85,7 @@ const systems = [
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-7">
+      <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-7" id="os-grid">
         <div
           v-for="os in systems"
           :key="os.name"
@@ -130,13 +144,17 @@ const systems = [
 
         <div class="flex gap-4">
           <button
+            type="button"
             class="px-8 py-3 rounded-xl border border-white/10 hover:border-pink-500 transition"
+            @click="changeVersion"
           >
             تغییر نسخه
           </button>
 
           <button
+            type="button"
             class="px-8 py-3 rounded-xl bg-linear-to-r from-pink-600 to-purple-600 font-bold hover:scale-[1.03] transition"
+            @click="continueOrder"
           >
             ادامه سفارش
           </button>

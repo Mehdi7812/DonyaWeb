@@ -103,6 +103,25 @@ const totalPrice = computed(() => {
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("fa-IR").format(price);
+
+const requestNote = useDedicatedRequest();
+const toast = useToast();
+
+function submitOrder() {
+  requestNote.value = [
+    "درخواست سفارش سرور اختصاصی (پیکربندی سفارشی)",
+    `پردازنده: ${selectedCpu.value.name}`,
+    `RAM: ${selectedRam.value.name}`,
+    `فضای ذخیره‌سازی: ${selectedStorage.value.name}`,
+    `دیتاسنتر: ${selectedLocation.value.name}`,
+    `سیستم‌عامل: ${selectedOS.value.name}`,
+    `تعداد IPv4: ${selectedIP.value.count}`,
+    `بکاپ روزانه: ${backup.value ? "بله" : "خیر"}`,
+    `مبلغ ماهانه تخمینی: ${formatPrice(totalPrice.value)} تومان`,
+  ].join("\n");
+  toast.success("پیکربندی شما ثبت شد؛ فرم درخواست را تکمیل کنید.");
+  scrollToDedicatedConsultation();
+}
 </script>
 
 <template>
@@ -283,7 +302,9 @@ const formatPrice = (price: number) =>
           </div>
 
           <button
+            type="button"
             class="mt-8 w-full rounded-xl bg-linear-to-r from-pink-600 to-purple-600 py-4 font-bold transition hover:scale-[1.02]"
+            @click="submitOrder"
           >
             ثبت سفارش
           </button>

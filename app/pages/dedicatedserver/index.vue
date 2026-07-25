@@ -16,7 +16,7 @@ import {
   CheckCircle,
 } from "lucide-vue-next";
 
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 useHead({
   title: "سرور اختصاصی | دنیاوب",
@@ -116,6 +116,17 @@ const submitted = ref(false);
 const isSubmitting = ref(false);
 const toast = useToast();
 
+// وقتی از کارت‌های پلن/دیتاسنتر/سیستم‌عامل/پیکربندی روی "سفارش" کلیک بشه،
+// این مقدار پر می‌شه و به‌صورت خودکار توی فرم مشاوره جای می‌گیره
+const requestNote = useDedicatedRequest();
+watch(
+  requestNote,
+  (note) => {
+    if (note) form.value.message = note;
+  },
+  { immediate: true }
+);
+
 async function handleSubmit() {
   isSubmitting.value = true;
 
@@ -123,6 +134,7 @@ async function handleSubmit() {
 
   isSubmitting.value = false;
   submitted.value = true;
+  requestNote.value = "";
   toast.success('درخواست مشاوره شما با موفقیت ثبت شد.');
 }
 </script>
@@ -263,7 +275,7 @@ async function handleSubmit() {
     <DedicatedOperatingSystems />
 
     <!-- Consultation form -->
-    <section class="px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto pb-24">
+    <section id="consultation-section" class="scroll-mt-28 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto pb-24">
       <div class="glass-card rounded-3xl p-8 md:p-10">
         <h2 class="text-2xl font-bold mb-2 text-center">
           درخواست مشاوره رایگان
@@ -312,7 +324,7 @@ async function handleSubmit() {
                 type="tel"
                 required
                 class="w-full pr-12 pl-4 py-3 rounded-xl input-glass text-white placeholder-gray-500 outline-none"
-                placeholder="۰۹1۲۳۴۵۶۷۸۹"
+                placeholder="۰۹۱۲۳۴۵۶۷۸۹"
               />
             </div>
           </div>

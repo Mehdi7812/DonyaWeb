@@ -8,6 +8,15 @@ import {
   ArrowLeft,
 } from "lucide-vue-next";
 
+const requestNote = useDedicatedRequest();
+const toast = useToast();
+
+function selectPlan(plan: { name: string; price: string; cpu: string; ram: string; storage: string }) {
+  requestNote.value = `درخواست سفارش پلن «${plan.name}» (سرور اختصاصی)\nپردازنده: ${plan.cpu}\nحافظه: ${plan.ram}\nفضای ذخیره‌سازی: ${plan.storage}\nقیمت پایه: ${plan.price} تومان / ماه`;
+  toast.success(`پلن ${plan.name} انتخاب شد؛ فرم درخواست را تکمیل کنید.`);
+  scrollToDedicatedConsultation();
+}
+
 const plans = [
   {
     name: "Starter",
@@ -111,7 +120,9 @@ const plans = [
         </div>
 
         <button
+          type="button"
           class="mt-10 w-full rounded-xl bg-linear-to-r from-pink-600 to-purple-600 py-3 font-bold hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+          @click="selectPlan(plan)"
         >
           سفارش سرور
 

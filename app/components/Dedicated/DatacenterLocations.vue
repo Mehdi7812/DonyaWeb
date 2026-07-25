@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { Server, Shield, Zap, Globe, ArrowLeft } from "lucide-vue-next";
 
+const requestNote = useDedicatedRequest();
+const toast = useToast();
+
+function selectLocation(item: { country: string; city: string; ping: string; network: string; protection: string }) {
+  requestNote.value = `درخواست سرور اختصاصی در دیتاسنتر ${item.country} (${item.city})\nپینگ: ${item.ping}\nپورت شبکه: ${item.network}\nمحافظت DDoS: ${item.protection}`;
+  toast.success(`دیتاسنتر ${item.country} انتخاب شد؛ فرم درخواست را تکمیل کنید.`);
+  scrollToDedicatedConsultation();
+}
+
 const locations = [
   {
     country: "آلمان",
@@ -117,7 +126,9 @@ const locations = [
           </div>
 
           <button
+            type="button"
             class="mt-8 w-full bg-linear-to-r from-pink-600 to-purple-600 rounded-xl py-3 flex justify-center items-center gap-2 hover:scale-[1.02] transition"
+            @click="selectLocation(item)"
           >
             انتخاب لوکیشن
 
