@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import { Clock } from 'lucide-vue-next';
+
+</script>
+
 <template>
     <section class="relative pt-40 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
       <div class="inline-block mb-4 px-4 py-1 rounded-full glass text-sm text-purple-300 border border-purple-500/30">

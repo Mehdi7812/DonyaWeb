@@ -1,11 +1,7 @@
 <script setup>
-import { ref } from 'vue'
-
 useHead({
-  title: 'پشتیبانی | دنیاوب'
-})
-
-
+  title: "پشتیبانی | دنیاوب",
+});
 </script>
 
 <template>

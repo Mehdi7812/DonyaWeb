@@ -51,6 +51,7 @@ const navItems = [
     label: 'مالی',
     icon: Wallet,
     children: [
+      { type: 'link', label: 'کیف پول', to: '/dashboard/finance/wallet', icon: Wallet },
       { type: 'link', label: 'فهرست خرید', to: '/dashboard/invoices', icon: FileText },
       { type: 'link', label: 'افزایش موجودی', to: '/dashboard/finance/topup', icon: CreditCard },
       { type: 'link', label: 'کارت هدیه', to: '/dashboard/finance/gift-card', icon: Gift }
