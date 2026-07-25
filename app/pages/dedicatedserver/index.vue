@@ -254,6 +254,14 @@ async function handleSubmit() {
       </div>
     </section>
 
+    <DedicatedPlans />
+    
+    <DedicatedServerConfigurator />
+    
+    <DedicatedDatacenterLocations />
+    
+    <DedicatedOperatingSystems />
+
     <!-- Consultation form -->
     <section class="px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto pb-24">
       <div class="glass-card rounded-3xl p-8 md:p-10">
