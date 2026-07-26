@@ -176,6 +176,8 @@ async function handleRegister() {
             >
             <span>
               <NuxtLink to="/terms" class="text-purple-300 hover:text-purple-200 transition-colors">قوانین و مقررات</NuxtLink>
+              و
+              <NuxtLink to="/privacy" class="text-purple-300 hover:text-purple-200 transition-colors">حریم خصوصی</NuxtLink>
               را می‌پذیرم
             </span>
           </label>

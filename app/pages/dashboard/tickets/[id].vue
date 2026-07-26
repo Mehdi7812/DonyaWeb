@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from 'vue'
-import { ArrowRight, Send } from 'lucide-vue-next'
+import { ArrowRight, Send, Paperclip } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
 
 const route = useRoute()
-const { getTicketById, user } = useDashboard()
+const { getTicketById, addTicketMessage, user } = useDashboard()
 
 const ticket = getTicketById(route.params.id)
 
@@ -19,23 +19,43 @@ useHead({
 
 const localMessages = ref([...ticket.messages])
 const reply = ref('')
+const replyAttachments = ref([])
 const isSending = ref(false)
 
 async function sendReply() {
   if (!reply.value.trim()) return
   isSending.value = true
 
-  // TODO: اتصال به API واقعی ثبت پاسخ تیکت
+  // TODO: اتصال به API واقعی ثبت پاسخ تیکت (شامل آپلود واقعی فایل‌های پیوستی)
   await new Promise((resolve) => setTimeout(resolve, 600))
 
-  localMessages.value.push({
+  const newMessage = {
     from: 'user',
     name: user.name,
     text: reply.value.trim(),
-    date: 'همین الان'
-  })
+    date: 'همین الان',
+    attachments: [...replyAttachments.value]
+  }
+  addTicketMessage(ticket.id, newMessage)
+  localMessages.value.push(newMessage)
   reply.value = ''
+  replyAttachments.value = []
   isSending.value = false
+}
+
+function isFileObject(att) {
+  return import.meta.client && typeof File !== 'undefined' && att instanceof File
+}
+
+function attachmentUrl(att) {
+  return isFileObject(att) ? URL.createObjectURL(att) : '#'
+}
+
+function formatSize(bytes) {
+  if (!bytes) return ''
+  if (bytes < 1024) return `${bytes} بایت`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} کیلوبایت`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} مگابایت`
 }
 </script>
 
@@ -75,6 +95,29 @@ async function sendReply() {
             <span class="text-xs text-gray-500">{{ m.date }}</span>
           </div>
           <p class="text-gray-300 text-sm leading-relaxed">{{ m.text }}</p>
+
+          <div v-if="m.attachments && m.attachments.length" class="mt-3 flex flex-wrap gap-2">
+            <template v-for="(att, ai) in m.attachments" :key="ai">
+              <a
+                v-if="isFileObject(att)"
+                :href="attachmentUrl(att)"
+                :download="att.name"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs hover:border-purple-500/40 transition-all"
+              >
+                <Paperclip class="w-3.5 h-3.5 text-purple-400" />
+                {{ att.name }}
+                <span class="text-gray-500" dir="ltr">({{ formatSize(att.size) }})</span>
+              </a>
+              <span
+                v-else
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-400"
+              >
+                <Paperclip class="w-3.5 h-3.5 text-purple-400" />
+                {{ att.name }}
+                <span class="text-gray-500" dir="ltr">({{ formatSize(att.size) }})</span>
+              </span>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -88,6 +131,9 @@ async function sendReply() {
         placeholder="پاسخ خود را بنویسید..."
         class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-gray-500 outline-none resize-none mb-4"
       ></textarea>
+      <div class="mb-4">
+        <DashboardFileAttachInput v-model="replyAttachments" />
+      </div>
       <button
         type="button"
         :disabled="isSending || !reply.trim()"

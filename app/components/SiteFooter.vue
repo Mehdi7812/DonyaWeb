@@ -17,7 +17,9 @@ const supportLinks = [
   { label: 'مرکز آموزش', to: '#' },
   { label: 'وضعیت شبکه', to: '#' },
   { label: 'تماس با ما', to: '/support' },
-  { label: 'قوانین خدمات', to: '/terms' }
+  { label: 'قوانین خدمات', to: '/terms' },
+  { label: 'حریم خصوصی', to: '/privacy' },
+  { label: 'تعهدنامه سطح خدمات (SLA)', to: '/sla' }
 ]
 
 const trustBadges = [

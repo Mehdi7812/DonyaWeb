@@ -28,8 +28,10 @@ const subject = ref('')
 const department = ref('tech')
 const priority = ref('normal')
 const message = ref('')
+const attachments = ref([])
 const isSubmitting = ref(false)
 const toast = useToast()
+const { addTicket } = useDashboard()
 
 async function handleSubmit() {
   if (!subject.value || !message.value) {
@@ -39,10 +41,18 @@ async function handleSubmit() {
 
   isSubmitting.value = true
   try {
-    // TODO: اتصال به API واقعی ثبت تیکت
+    // TODO: اتصال به API واقعی ثبت تیکت (شامل آپلود واقعی فایل‌های پیوستی)
     await new Promise((resolve) => setTimeout(resolve, 800))
+    const departmentLabel = departments.find((d) => d.value === department.value)?.label || department.value
+    const created = addTicket({
+      subject: subject.value.trim(),
+      department: departmentLabel,
+      priority: priority.value,
+      message: message.value.trim(),
+      attachments: [...attachments.value]
+    })
     toast.success('تیکت شما با موفقیت ثبت شد.')
-    await navigateTo('/dashboard/tickets')
+    await navigateTo(`/dashboard/tickets/${created.id}`)
   } finally {
     isSubmitting.value = false
   }
@@ -101,6 +111,11 @@ async function handleSubmit() {
             placeholder="مشکل خود را با جزئیات شرح دهید..."
             class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-gray-500 outline-none resize-none"
           ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-300 mb-2">پیوست فایل (اختیاری)</label>
+          <DashboardFileAttachInput v-model="attachments" />
         </div>
 
         <button

@@ -24,7 +24,7 @@ function writeOrders(orders) {
   }
 }
 
-const TYPE_PREFIX = { vps: 'VPS', hosting: 'CLD', domain: 'DOM', invoice: 'PAY' }
+const TYPE_PREFIX = { vps: 'VPS', hosting: 'CLD', domain: 'DOM', invoice: 'PAY', cart: 'CART' }
 const TYPE_LABEL = { vps: 'VPS ابری', hosting: 'هاست ابری', domain: 'دامنه' }
 
 function generateOrderId(type) {
@@ -65,11 +65,36 @@ export function useCheckout() {
     return orders[id]
   }
 
-  // بعد از پرداخت موفق: یا فاکتور موجود را «پرداخت‌شده» می‌کند، یا برای سفارش تازه
-  // یک فاکتور و یک سرویس جدید در پنل کاربری (داده‌ی موقت) می‌سازد
+  // بعد از پرداخت موفق: فاکتور موجود را «پرداخت‌شده» می‌کند، یا برای سفارش تازه
+  // (تکی یا چندآیتمی از سبد خرید) فاکتور و سرویس‌های متناظر را در پنل کاربری می‌سازد
   function finalizeOrder(order) {
     if (order.type === 'invoice' && order.invoiceId) {
       markInvoicePaid(order.invoiceId)
+      return
+    }
+
+    if (order.type === 'cart' && Array.isArray(order.items)) {
+      addInvoice({
+        id: `INV-${order.id}`,
+        service: order.items.length > 1 ? `سبد خرید (${order.items.length} مورد)` : order.items[0]?.title,
+        amount: order.amount.toLocaleString('fa-IR'),
+        date: 'اکنون',
+        status: 'paid'
+      })
+
+      order.items.forEach((item, index) => {
+        addService({
+          id: `srv-${order.id}-${index + 1}`,
+          type: item.type,
+          typeLabel: TYPE_LABEL[item.type] || item.type,
+          name: item.title,
+          identifier: item.identifier,
+          status: 'active',
+          renewDate: '—',
+          price: item.amount.toLocaleString('fa-IR'),
+          cycle: item.cycleLabel
+        })
+      })
       return
     }
 

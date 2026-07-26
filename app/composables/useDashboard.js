@@ -85,7 +85,7 @@ const tickets = [
     priority: 'high',
     date: '۱۴۰۳/۰۴/۱۸',
     messages: [
-      { from: 'user', name: 'علی محمدی', text: 'سلام، از دیروز نمی‌تونم با SSH به VPS خودم وصل بشم. خطای Connection Refused می‌گیرم.', date: '۱۴۰۳/۰۴/۱۸ - ۱۰:۲۰' },
+      { from: 'user', name: 'علی محمدی', text: 'سلام، از دیروز نمی‌تونم با SSH به VPS خودم وصل بشم. خطای Connection Refused می‌گیرم.', date: '۱۴۰۳/۰۴/۱۸ - ۱۰:۲۰', attachments: [{ name: 'error-screenshot.png', size: 184320 }] },
       { from: 'support', name: 'رضا کریمی', text: 'سلام وقت بخیر، در حال بررسی سرویس شما هستیم. لطفاً چند دقیقه صبر کنید.', date: '۱۴۰۳/۰۴/۱۸ - ۱۱:۰۵' }
     ]
   },
@@ -383,6 +383,35 @@ export function useDashboard() {
     return account
   }
 
+  // --- تیکت‌های پشتیبانی ---
+
+  // ثبت تیکت جدید (اولین پیام همراه با فایل‌های پیوستی به‌صورت شیء File نگه‌داری می‌شود)
+  function addTicket({ subject, department, priority, message, attachments = [] }) {
+    const id = `TCK-${Date.now().toString().slice(-6)}`
+    const ticket = {
+      id,
+      subject,
+      department,
+      status: 'open',
+      priority,
+      date: 'همین الان',
+      messages: [
+        { from: 'user', name: user.name, text: message, date: 'همین الان', attachments }
+      ]
+    }
+    tickets.unshift(ticket)
+    return ticket
+  }
+
+  // افزودن پیام (پاسخ) به یک تیکت موجود
+  function addTicketMessage(ticketId, msg) {
+    const ticket = tickets.find((t) => t.id === ticketId)
+    if (!ticket) return null
+    ticket.messages.push(msg)
+    if (ticket.status === 'closed') ticket.status = 'open'
+    return msg
+  }
+
   // --- مدیریت رکوردهای DNS ---
 
   function getDnsRecords(domain) {
@@ -504,6 +533,8 @@ export function useDashboard() {
     getDnsRecords,
     addDnsRecord,
     updateDnsRecord,
-    deleteDnsRecord
+    deleteDnsRecord,
+    addTicket,
+    addTicketMessage
   }
 }

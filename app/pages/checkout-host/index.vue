@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import {
   Check, ShieldCheck, CreditCard, Wallet, User, AtSign, Phone,
   Building2, Tag, X, Loader2,
-  RefreshCcw, Lock, Sparkles
+  RefreshCcw, Lock, Sparkles, ShoppingCart
 } from 'lucide-vue-next'
 
 useHead({
@@ -13,6 +13,7 @@ useHead({
 const route = useRoute()
 const router = useRouter()
 const { createOrder, payWithWallet, hasEnoughWalletBalance } = useCheckout()
+const { addItem: addToCartItem } = useCart()
 
 // --- Plans ---
 const plans = {
@@ -127,10 +128,41 @@ const totalPrice = computed(() => afterCycleDiscount.value - couponDiscountAmoun
 
 // --- Validation + submit ---
 const isSubmitting = ref(false)
+const isAddingToCart = ref(false)
 const toast = useToast()
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const phoneRegex = /^09\d{9}$/
+
+function buildProductItem() {
+  return {
+    type: 'hosting',
+    title: selectedPlan.value.name,
+    identifier: domainOption.value === 'existing' ? domain.value.trim() : 'بدون دامنه (ثبت بعدی)',
+    amount: Math.round(totalPrice.value),
+    cycleLabel: activeCycle.value.label,
+    summary: [
+      { label: 'پلن', value: selectedPlan.value.name },
+      { label: 'دامنه', value: domainOption.value === 'existing' ? domain.value.trim() : 'ثبت بعدی از پنل' },
+      ...(selectedAddons.value.filter((id) => id !== 'migration').length
+        ? [{ label: 'خدمات تکمیلی', value: addons.filter((a) => selectedAddons.value.includes(a.id) && a.id !== 'migration').map((a) => a.label).join('، ') }]
+        : [])
+    ]
+  }
+}
+
+async function addToCart() {
+  if (domainOption.value === 'existing' && !domain.value.trim()) {
+    toast.error('دامنه خود را وارد کنید یا گزینه «بعداً ثبت می‌کنم» را انتخاب کنید')
+    return
+  }
+  isAddingToCart.value = true
+  await new Promise((resolve) => setTimeout(resolve, 400))
+  addToCartItem(buildProductItem())
+  isAddingToCart.value = false
+  toast.success(`«${selectedPlan.value.name}» به سبد خرید اضافه شد`)
+  router.push('/cart')
+}
 
 async function submitOrder() {
 
@@ -163,18 +195,7 @@ async function submitOrder() {
   try {
     // TODO: اتصال به API واقعی ثبت سفارش هاست
     const order = createOrder({
-      type: 'hosting',
-      title: selectedPlan.value.name,
-      identifier: domainOption.value === 'existing' ? domain.value.trim() : 'بدون دامنه (ثبت بعدی)',
-      amount: Math.round(totalPrice.value),
-      cycleLabel: activeCycle.value.label,
-      summary: [
-        { label: 'پلن', value: selectedPlan.value.name },
-        { label: 'دامنه', value: domainOption.value === 'existing' ? domain.value.trim() : 'ثبت بعدی از پنل' },
-        ...(selectedAddons.value.filter((id) => id !== 'migration').length
-          ? [{ label: 'خدمات تکمیلی', value: addons.filter((a) => selectedAddons.value.includes(a.id) && a.id !== 'migration').map((a) => a.label).join('، ') }]
-          : [])
-      ],
+      ...buildProductItem(),
       customer: {
         fullName: fullName.value.trim(),
         email: email.value.trim(),
@@ -542,6 +563,17 @@ async function submitOrder() {
             >
               <Loader2 v-if="isSubmitting" class="w-4 h-4 animate-spin" />
               {{ isSubmitting ? 'در حال پردازش...' : 'پرداخت و تکمیل سفارش' }}
+            </button>
+
+            <button
+              type="button"
+              :disabled="isAddingToCart"
+              class="w-full mt-3 py-3 rounded-xl glass border border-white/10 hover:border-purple-500/40 transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              @click="addToCart"
+            >
+              <Loader2 v-if="isAddingToCart" class="w-4 h-4 animate-spin" />
+              <ShoppingCart v-else class="w-4 h-4" />
+              {{ isAddingToCart ? 'در حال افزودن...' : 'افزودن به سبد خرید' }}
             </button>
 
             <div class="flex items-center justify-center gap-4 text-xs text-gray-500 mt-4">

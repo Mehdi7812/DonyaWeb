@@ -14,7 +14,7 @@ defineProps({
       بازگشت به وبلاگ
     </NuxtLink>
 
-    <span class="inline-block mb-4 px-4 py-1 rounded-full glass text-sm text-purple-300 border border-purple-500/30">
+    <span class="inline-flex items-center gap-1 mb-4 px-4 py-1 rounded-full glass text-sm text-purple-300 border border-purple-500/30">
       {{ categoryLabel }}
     </span>
 

@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import {
   Check, ShieldCheck, CreditCard, Wallet, User, AtSign, Phone,
   Building2, Tag, X, Loader2,
-  RefreshCcw, Lock, Globe, ShieldOff, RotateCcw
+  RefreshCcw, Lock, Globe, ShieldOff, RotateCcw, ShoppingCart
 } from 'lucide-vue-next'
 
 useHead({
@@ -13,6 +13,7 @@ useHead({
 const route = useRoute()
 const router = useRouter()
 const { createOrder, payWithWallet, hasEnoughWalletBalance } = useCheckout()
+const { addItem: addToCartItem } = useCart()
 
 // --- TLD price table (annual price) ---
 const tlds = {
@@ -125,11 +126,40 @@ const totalPrice = computed(() => afterPeriodDiscount.value - couponDiscountAmou
 
 // --- Validation + submit ---
 const isSubmitting = ref(false)
+const isAddingToCart = ref(false)
 const toast = useToast()
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const phoneRegex = /^09\d{9}$/
 const domainRegex = /^[a-zA-Z0-9-]{2,63}$/
+
+function buildProductItem() {
+  return {
+    type: 'domain',
+    title: fullDomain.value,
+    identifier: fullDomain.value,
+    amount: Math.round(totalPrice.value),
+    cycleLabel: activePeriod.value.label,
+    summary: [
+      { label: 'دامنه', value: fullDomain.value },
+      { label: 'مدت ثبت', value: activePeriod.value.label },
+      { label: 'تمدید خودکار', value: autoRenew.value ? 'فعال' : 'غیرفعال' }
+    ]
+  }
+}
+
+async function addToCart() {
+  if (!domainName.value.trim() || !domainRegex.test(domainName.value.trim())) {
+    toast.error('نام دامنه معتبر نیست (فقط حروف انگلیسی، عدد و خط تیره)')
+    return
+  }
+  isAddingToCart.value = true
+  await new Promise((resolve) => setTimeout(resolve, 400))
+  addToCartItem(buildProductItem())
+  isAddingToCart.value = false
+  toast.success(`«${fullDomain.value}» به سبد خرید اضافه شد`)
+  router.push('/cart')
+}
 
 async function submitOrder() {
 
@@ -162,16 +192,7 @@ async function submitOrder() {
   try {
     // TODO: اتصال به API واقعی ثبت دامنه (WHOIS/Registrar)
     const order = createOrder({
-      type: 'domain',
-      title: fullDomain.value,
-      identifier: fullDomain.value,
-      amount: Math.round(totalPrice.value),
-      cycleLabel: activePeriod.value.label,
-      summary: [
-        { label: 'دامنه', value: fullDomain.value },
-        { label: 'مدت ثبت', value: activePeriod.value.label },
-        { label: 'تمدید خودکار', value: autoRenew.value ? 'فعال' : 'غیرفعال' }
-      ],
+      ...buildProductItem(),
       customer: {
         fullName: fullName.value.trim(),
         email: email.value.trim(),
@@ -518,6 +539,17 @@ async function submitOrder() {
             >
               <Loader2 v-if="isSubmitting" class="w-4 h-4 animate-spin" />
               {{ isSubmitting ? 'در حال پردازش...' : 'پرداخت و ثبت دامنه' }}
+            </button>
+
+            <button
+              type="button"
+              :disabled="isAddingToCart"
+              class="w-full mt-3 py-3 rounded-xl glass border border-white/10 hover:border-purple-500/40 transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              @click="addToCart"
+            >
+              <Loader2 v-if="isAddingToCart" class="w-4 h-4 animate-spin" />
+              <ShoppingCart v-else class="w-4 h-4" />
+              {{ isAddingToCart ? 'در حال افزودن...' : 'افزودن به سبد خرید' }}
             </button>
 
             <div class="flex items-center justify-center gap-4 text-xs text-gray-500 mt-4">

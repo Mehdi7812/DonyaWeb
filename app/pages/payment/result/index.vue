@@ -38,7 +38,7 @@ const dashboardLink = computed(() => {
 // برای تلاش مجدد، کاربر را به همان فرم checkout با پلن انتخابی قبلی برمی‌گردانیم
 const retryLink = computed(() => {
   if (!order.value) return '/'
-  const map = { vps: '/checkout-vps', hosting: '/checkout-host', domain: '/checkout-domain' }
+  const map = { vps: '/checkout-vps', hosting: '/checkout-host', domain: '/checkout-domain', cart: '/cart' }
   return map[order.value.type] || '/'
 })
 
@@ -143,7 +143,7 @@ function copyOrderId() {
             :to="retryLink"
             class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition-all font-medium"
           >
-            بازگشت به فرم سفارش
+            بازگشت به {{ order?.type === 'cart' ? 'سبد خرید' : 'فرم سفارش' }}
           </NuxtLink>
         </div>
         <NuxtLink to="/support" class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mt-6">

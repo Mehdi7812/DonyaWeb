@@ -1,6 +1,6 @@
 <template>
     <section class="relative pt-40 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
-      <div class="inline-block mb-4 px-4 py-1 rounded-full glass text-sm text-purple-300 border border-purple-500/30">
+      <div class="inline-flex items-center gap-1 mb-4 px-4 py-1 rounded-full glass text-sm text-purple-300 border border-purple-500/30">
         فقط ۳ قدم تا آنلاین شدن سایت شما
       </div>
       <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">

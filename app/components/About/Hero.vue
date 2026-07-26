@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-vue-next'
 
 <template>
   <section class="relative pt-40 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
-    <div class="inline-block mb-4 px-4 py-1 rounded-full glass text-sm text-purple-300 border border-purple-500/30">
+    <div class="inline-flex items-center gap-1 mb-4 px-4 py-1 rounded-full glass text-sm text-purple-300 border border-purple-500/30">
       <Sparkles class="inline w-4 h-4 -mt-1 ml-1" /> از سال ۱۳۹۸ کنار کسب‌وکارهای ایرانی
     </div>
 

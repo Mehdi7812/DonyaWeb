@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
-import { Menu, X } from 'lucide-vue-next'
+import { Menu, X, ShoppingCart } from 'lucide-vue-next'
 
 const scrolled = ref(false)
 const mobileOpen = ref(false)
 const route = useRoute()
+const { itemCount } = useCart()
 
 function handleScroll() {
   scrolled.value = window.scrollY > 50
@@ -54,6 +55,15 @@ const navLinks = [
         </div>
 
         <div class="flex items-center gap-2 sm:gap-4">
+          <NuxtLink to="/cart" class="relative w-10 h-10 rounded-full glass flex items-center justify-center shrink-0 hover:bg-white/20 transition-all">
+            <ShoppingCart class="w-5 h-5" />
+            <span
+              v-if="itemCount > 0"
+              class="absolute -top-1 -left-1 min-w-[18px] h-[18px] px-1 rounded-full bg-linear-to-r from-purple-500 to-blue-500 text-[10px] font-bold flex items-center justify-center"
+            >
+              {{ itemCount }}
+            </span>
+          </NuxtLink>
           <NuxtLink to="/login" class="hidden md:block px-6 py-2 rounded-full glass hover:bg-white/20 transition-all">
             ورود
           </NuxtLink>
