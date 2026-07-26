@@ -30,9 +30,9 @@ const trustBadges = [
 ]
 
 const socialLinks = [
-  { icon: Instagram, label: 'اینستاگرام', href: '#' },
-  { icon: Twitter, label: 'توییتر', href: '#' },
-  { icon: Linkedin, label: 'لینکدین', href: '#' }
+  // { icon: Instagram, label: 'اینستاگرام', href: '#' },
+  // { icon: Twitter, label: 'توییتر', href: '#' },
+  { icon: Linkedin, label: 'لینکدین', href: 'https://www.linkedin.com/company/sinatech-dm/' }
 ]
 
 // فرم عضویت در خبرنامه
@@ -129,20 +129,20 @@ function scrollToTop() {
           <h4 class="font-bold mb-4">ارتباط با ما</h4>
           <ul class="space-y-3 text-gray-400 text-sm">
             <li>
-              <a href="tel:02112345678" class="flex items-center gap-2 hover:text-white transition-colors">
+              <a href="tel:02191090605 " class="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone class="w-4 h-4 shrink-0" />
-                <span dir="rtl">۰۲۱-۱۲۳۴۵۶۷۸</span>
+                <span dir="rtl">۰۲۱-۹۱۰۹۰۶۰۵</span>
               </a>
             </li>
             <li>
-              <a href="mailto:support@donyaweb.ir" class="flex items-center gap-2 hover:text-white transition-colors">
+              <a href="mailto:support@donyaweb.com" class="flex items-center gap-2 hover:text-white transition-colors">
                 <Mail class="w-4 h-4 shrink-0" />
-                support@donyaweb.ir
+                support@donyaweb.com
               </a>
             </li>
             <li class="flex items-center gap-2">
               <MapPin class="w-4 h-4 shrink-0" />
-              آمل، خیابان هراز
+              خیابان ولیعصر ، بالاتر ار پارک وی ،خیابان فیاضی ،پلاک 148 ،طبقه دوم
             </li>
           </ul>
         </div>
@@ -157,6 +157,7 @@ function scrollToTop() {
             :key="s.label"
             :href="s.href"
             :aria-label="s.label"
+            target="_blank"
             class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-linear-to-br hover:from-purple-600 hover:to-blue-600 hover:border-transparent hover-lift transition-all"
           >
             <component :is="s.icon" class="w-5 h-5" />

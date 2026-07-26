@@ -5,23 +5,23 @@ const channels = [
   {
     icon: Phone,
     title: 'تماس تلفنی',
-    detail: '۰۲۱-۱۲۳۴۵۶۷۸',
+    detail: '۰۲۱-۹۱۰۹۰۶۰۵',
     action: 'تماس بگیرید',
-    href: 'tel:02112345678'
+    href: 'tel:02191090605 '
   },
   {
     icon: Mail,
     title: 'ایمیل',
-    detail: 'support@donyaweb.ir',
+    detail: 'support@donyaweb.com',
     action: 'ارسال ایمیل',
-    href: 'mailto:support@donyaweb.ir'
+    href: 'mailto:support@donyaweb.com'
   },
   {
     icon: MapPin,
     title: 'دفتر مرکزی',
-    detail: 'آمل، خیابان هراز',
+    detail: 'خیابان ولیعصر ، بالاتر ار پارک وی ،خیابان فیاضی ،پلاک 148 ،طبقه دوم',
     action: 'مسیریابی',
-    href: 'https://maps.google.com/?q=آمل، خیابان هراز'
+    href: 'https://maps.google.com/?q=خیابان ولیعصر ، بالاتر ار پارک وی ،خیابان فیاضی ،پلاک 148 ،طبقه دوم'
   }
 ]
 </script>

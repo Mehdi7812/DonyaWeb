@@ -33,13 +33,13 @@ const channels = [
     icon: Phone,
     title: 'تماس تلفنی',
     desc: 'پشتیبانی تلفنی ۲۴ ساعته، همه روزهای هفته',
-    action: '۰۲۱-۱۲۳۴۵۶۷۸'
+    action: '۰۲۱-۹۱۰۹۰۶۰۵'
   },
   {
     icon: Mail,
     title: 'ایمیل',
     desc: 'برای درخواست‌های فنی و مستندات، پاسخ زیر ۲۴ ساعت',
-    action: 'support@donyaweb.ir'
+    action: 'support@donyaweb.com'
   }
 ]
 </script>

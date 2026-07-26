@@ -150,13 +150,13 @@ async function handleSubmit() {
         <div class="glass-card rounded-3xl p-8">
           <h3 class="text-lg font-bold mb-4">ما را دنبال کنید</h3>
           <div class="flex gap-4">
-            <a href="#" class="w-11 h-11 rounded-full glass flex items-center justify-center hover:bg-white/20 transition-all">
+            <!-- <a href="#" class="w-11 h-11 rounded-full glass flex items-center justify-center hover:bg-white/20 transition-all">
               <Instagram class="w-5 h-5" />
             </a>
             <a href="#" class="w-11 h-11 rounded-full glass flex items-center justify-center hover:bg-white/20 transition-all">
               <Twitter class="w-5 h-5" />
-            </a>
-            <a href="#" class="w-11 h-11 rounded-full glass flex items-center justify-center hover:bg-white/20 transition-all">
+            </a> -->
+            <a href="https://www.linkedin.com/company/sinatech-dm/" target="_blank" class="w-11 h-11 rounded-full glass flex items-center justify-center hover:bg-white/20 transition-all">
               <Linkedin class="w-5 h-5" />
             </a>
           </div>
@@ -164,10 +164,13 @@ async function handleSubmit() {
 
         <div class="glass-card rounded-3xl p-8">
           <h3 class="text-lg font-bold mb-2">دفتر مرکزی</h3>
-          <p class="text-gray-400 text-sm leading-relaxed mb-4">آمل، خیابان هراز</p>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">خیابان ولیعصر ، بالاتر ار پارک وی ،خیابان فیاضی ،پلاک 148 ،طبقه دوم</p>
           <div class="rounded-2xl overflow-hidden border border-white/10 h-40 bg-white/5 flex items-center justify-center text-gray-500 text-sm">
-            نقشه محل دفتر
+            <NuxtImg src="/map.png" cover />
           </div>
+          <!-- <div class="rounded-2xl overflow-hidden border border-white/10 h-40 bg-white/5 flex items-center justify-center text-gray-500 text-sm">
+            نقشه محل دفتر
+          </div> -->
         </div>
       </div>
     </div>

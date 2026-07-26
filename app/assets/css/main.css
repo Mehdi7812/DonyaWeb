@@ -17,6 +17,10 @@
   }
 }
 
+button {
+  cursor: pointer;
+}
+
 .glass {
   background: #ffffff0d !important;
   -webkit-backdrop-filter: blur(16px);

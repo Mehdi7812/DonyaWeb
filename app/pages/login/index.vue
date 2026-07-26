@@ -110,16 +110,16 @@ async function handleLogin() {
           </button>
         </form>
 
-        <div class="flex items-center gap-3 my-6">
+        <!-- <div class="flex items-center gap-3 my-6">
           <div class="flex-1 h-px bg-white/10"></div>
           <span class="text-xs text-gray-500">یا</span>
           <div class="flex-1 h-px bg-white/10"></div>
-        </div>
+        </div> -->
 
-        <p class="text-center text-sm text-gray-400">
+        <!-- <p class="text-center text-sm text-gray-400">
           حساب کاربری ندارید؟
           <NuxtLink to="/register" class="text-purple-300 hover:text-purple-200 font-medium transition-colors">ثبت‌نام کنید</NuxtLink>
-        </p>
+        </p> -->
       </div>
     </div>
   </section>

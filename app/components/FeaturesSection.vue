@@ -62,7 +62,7 @@ const features = [
               <div class="text-gray-300">99.99% uptime - Last 30 days</div>
               <div class="flex gap-2 text-blue-400 mt-4">
                 <span>$</span>
-                <span>ping donyaweb.ir</span>
+                <span>ping donyaweb.com</span>
               </div>
               <div class="text-gray-300">Reply from 185.XXX.XXX.XXX: bytes=32 time=12ms TTL=55</div>
               <div class="text-gray-300">Reply from 185.XXX.XXX.XXX: bytes=32 time=11ms TTL=55</div>

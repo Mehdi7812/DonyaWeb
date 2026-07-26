@@ -185,9 +185,9 @@ const dnsRecordsStore = {
   'example.com': [
     { id: 'dns-1001', type: 'A', name: '@', value: '185.231.45.12', ttl: 3600 },
     { id: 'dns-1002', type: 'A', name: 'www', value: '185.231.45.12', ttl: 3600 },
-    { id: 'dns-1003', type: 'MX', name: '@', value: 'mail.donyaweb.ir', ttl: 3600, priority: 10 },
-    { id: 'dns-1004', type: 'TXT', name: '@', value: 'v=spf1 include:donyaweb.ir ~all', ttl: 3600 },
-    { id: 'dns-1005', type: 'CNAME', name: 'cdn', value: 'cdn.donyaweb.ir', ttl: 3600 }
+    { id: 'dns-1003', type: 'MX', name: '@', value: 'mail.donyaweb.com', ttl: 3600, priority: 10 },
+    { id: 'dns-1004', type: 'TXT', name: '@', value: 'v=spf1 include:donyaweb.com ~all', ttl: 3600 },
+    { id: 'dns-1005', type: 'CNAME', name: 'cdn', value: 'cdn.donyaweb.com', ttl: 3600 }
   ],
   'shop-example.ir': [
     { id: 'dns-1006', type: 'A', name: '@', value: '185.231.45.20', ttl: 3600 },
@@ -203,13 +203,13 @@ const domainDetails = {
     autoRenew: true,
     locked: true,
     privacy: true,
-    nameservers: ['ns1.donyaweb.ir', 'ns2.donyaweb.ir']
+    nameservers: ['ns1.donyaweb.com', 'ns2.donyaweb.com']
   },
   'shop-example.ir': {
     autoRenew: true,
     locked: true,
     privacy: false,
-    nameservers: ['ns1.donyaweb.ir', 'ns2.donyaweb.ir']
+    nameservers: ['ns1.donyaweb.com', 'ns2.donyaweb.com']
   }
 }
 
@@ -244,7 +244,7 @@ const cdnZones = [
 
 const affiliate = {
   code: 'ALI-DW2024',
-  link: 'https://donyaweb.ir/ref/ALI-DW2024',
+  link: 'https://donyaweb.com/ref/ALI-DW2024',
   commissionRate: 20,
   stats: {
     referred: 14,
@@ -296,7 +296,7 @@ export function useDashboard() {
         autoRenew: false,
         locked: false,
         privacy: false,
-        nameservers: ['ns1.donyaweb.ir', 'ns2.donyaweb.ir']
+        nameservers: ['ns1.donyaweb.com', 'ns2.donyaweb.com']
       }
     )
   }
