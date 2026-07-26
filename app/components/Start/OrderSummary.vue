@@ -21,7 +21,8 @@ const props = defineProps({
 })
 
 function formatPrice(n) {
-  return Math.round(n).toLocaleString('fa-IR')
+  return "تماس بگیرید"
+  // return Math.round(n).toLocaleString('fa-IR')
 }
 
 const checkoutHref = computed(() => {

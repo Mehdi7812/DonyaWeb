@@ -7,7 +7,7 @@ const channels = [
     title: 'تماس تلفنی',
     detail: '۰۲۱-۹۱۰۹۰۶۰۵',
     action: 'تماس بگیرید',
-    href: 'tel:02191090605 '
+    href: 'tel:02191090605'
   },
   {
     icon: Mail,

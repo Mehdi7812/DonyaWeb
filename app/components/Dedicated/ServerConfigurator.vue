@@ -101,8 +101,8 @@ const totalPrice = computed(() => {
   );
 });
 
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat("fa-IR").format(price);
+const formatPrice = (price: number) => "تماس بگیرید"
+// const formatPrice = (price: number) => new Intl.NumberFormat("fa-IR").format(price);
 
 const requestNote = useDedicatedRequest();
 const toast = useToast();

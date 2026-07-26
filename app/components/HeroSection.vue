@@ -9,9 +9,9 @@ const stats = [
 ]
 
 const domainPrices = [
-  { tld: '.com', price: '۸۹,۰۰۰ تومان' },
-  { tld: '.ir', price: '۴۵,۰۰۰ تومان' },
-  { tld: '.net', price: '۹۵,۰۰۰ تومان' }
+  { tld: '.com', price: 'تماس بگیرید' },
+  { tld: '.ir', price: 'تماس بگیرید' },
+  { tld: '.net', price: 'تماس بگیرید' }
 ]
 
 const domainQuery = ref('')

@@ -60,9 +60,9 @@ import { Cpu, HardDrive, Wifi, Layers, Check } from 'lucide-vue-next'
 const selectedPlan = ref('vps2')
 
 const plans = [
-  { id: 'vps1', name: 'VPS 1', cpu: '۱ هسته', ram: '۲ GB', disk: '۴۰ GB NVMe', bandwidth: '۱ TB', price: '۲۹۰,۰۰۰' },
-  { id: 'vps2', name: 'VPS 2', cpu: '۲ هسته', ram: '۴ GB', disk: '۸۰ GB NVMe', bandwidth: '۲ TB', price: '۴۹۰,۰۰۰', badge: 'محبوب' },
-  { id: 'vps3', name: 'VPS 3', cpu: '۴ هسته', ram: '۸ GB', disk: '۱۶۰ GB NVMe', bandwidth: '۴ TB', price: '۸۹۰,۰۰۰' },
-  { id: 'vps4', name: 'VPS 4', cpu: '۶ هسته', ram: '۱۶ GB', disk: '۳۲۰ GB NVMe', bandwidth: '۸ TB', price: '۱,۴۹۰,۰۰۰' }
+  { id: 'vps1', name: 'VPS 1', cpu: '۱ هسته', ram: '۲ GB', disk: '۴۰ GB NVMe', bandwidth: '۱ TB', price: "تماس بگیرید" },
+  { id: 'vps2', name: 'VPS 2', cpu: '۲ هسته', ram: '۴ GB', disk: '۸۰ GB NVMe', bandwidth: '۲ TB', price: "تماس بگیرید", badge: 'محبوب' },
+  { id: 'vps3', name: 'VPS 3', cpu: '۴ هسته', ram: '۸ GB', disk: '۱۶۰ GB NVMe', bandwidth: '۴ TB', price: "تماس بگیرید" },
+  { id: 'vps4', name: 'VPS 4', cpu: '۶ هسته', ram: '۱۶ GB', disk: '۳۲۰ GB NVMe', bandwidth: '۸ TB', price: "تماس بگیرید" }
 ]
 </script>

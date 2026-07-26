@@ -19,19 +19,19 @@ const { addItem: addToCartItem } = useCart()
 const plans = {
   basic: {
     name: 'هاست پایه',
-    monthlyPrice: 49000,
+    monthlyPrice: 'تماس بگیرید',
     desc: 'مناسب برای سایت‌های شخصی',
     features: ['۱۰ GB فضای NVMe', 'پهنای باند نامحدود', '۱۰ دیتابیس', 'SSL رایگان']
   },
   pro: {
     name: 'هاست حرفه‌ای',
-    monthlyPrice: 129000,
+    monthlyPrice: 'تماس بگیرید',
     desc: 'مناسب برای فروشگاه‌های آنلاین',
     features: ['۵۰ GB فضای NVMe', 'پهنای باند نامحدود', 'دیتابیس نامحدود', 'بک‌آپ روزانه', 'پشتیبانی اولویت‌دار']
   },
   business: {
     name: 'هاست سازمانی',
-    monthlyPrice: 349000,
+    monthlyPrice: 'تماس بگیرید',
     desc: 'مناسب برای سازمان‌های بزرگ',
     features: ['۲۰۰ GB فضای NVMe', 'منابع اختصاصی', 'LiteSpeed Enterprise', 'پشتیبانی تلفنی']
   }
@@ -110,7 +110,8 @@ const acceptTerms = ref(false)
 
 // --- Pricing ---
 function formatPrice(n) {
-  return Math.round(n).toLocaleString('fa-IR')
+  return 'تماس بگیرید'
+  // return Math.round(n).toLocaleString('fa-IR')
 }
 
 const addonsMonthly = computed(() =>
@@ -163,70 +164,73 @@ async function addToCart() {
   toast.success(`«${selectedPlan.value.name}» به سبد خرید اضافه شد`)
   router.push('/cart')
 }
-
+ 
 async function submitOrder() {
-
-  if (!fullName.value.trim() || !email.value.trim() || !phone.value.trim()) {
-    toast.error('لطفاً اطلاعات مشتری را کامل کنید')
-    return
-  }
-  if (!emailRegex.test(email.value.trim())) {
-    toast.error('ایمیل وارد شده معتبر نیست')
-    return
-  }
-  if (!phoneRegex.test(phone.value.trim())) {
-    toast.error('شماره موبایل باید به‌صورت ۰۹xxxxxxxxx وارد شود')
-    return
-  }
-  if (billingType.value === 'company' && (!companyName.value.trim() || !nationalId.value.trim())) {
-    toast.error('لطفاً نام شرکت و شناسه ملی را وارد کنید')
-    return
-  }
-  if (domainOption.value === 'existing' && !domain.value.trim()) {
-    toast.error('دامنه خود را وارد کنید یا گزینه «بعداً ثبت می‌کنم» را انتخاب کنید')
-    return
-  }
-  if (!acceptTerms.value) {
-    toast.error('برای ادامه باید قوانین و مقررات را بپذیرید')
-    return
-  }
-
-  isSubmitting.value = true
-  try {
-    // TODO: اتصال به API واقعی ثبت سفارش هاست
-    const order = createOrder({
-      ...buildProductItem(),
-      customer: {
-        fullName: fullName.value.trim(),
-        email: email.value.trim(),
-        phone: phone.value.trim(),
-        billingType: billingType.value,
-        companyName: companyName.value.trim(),
-        nationalId: nationalId.value.trim()
-      },
-      paymentMethod: selectedPayment.value
-    })
-
-    if (selectedPayment.value === 'wallet') {
-      if (!hasEnoughWalletBalance(order.amount)) {
-        toast.error('موجودی کیف پول کافی نیست. روش «درگاه بانکی» را انتخاب کنید یا ابتدا کیف پول را شارژ کنید.')
-        isSubmitting.value = false
-        return
-      }
-      // TODO: اتصال به API واقعی کسر از کیف پول
-      await new Promise((resolve) => setTimeout(resolve, 900))
-      payWithWallet(order)
-      router.push({ path: '/payment/result', query: { order: order.id, status: 'success' } })
-      return
-    }
-
-    // TODO: اتصال به درگاه پرداخت واقعی — در حال حاضر به شبیه‌ساز داخلی هدایت می‌شود
-    router.push(`/payment/gateway/${order.id}`)
-  } catch (err) {
-    toast.error('ثبت سفارش با خطا مواجه شد، دوباره تلاش کنید')
-    isSubmitting.value = false
-  }
+  window.location.href = "tel:02191090605";
 }
+// async function submitOrder() {
+
+//   if (!fullName.value.trim() || !email.value.trim() || !phone.value.trim()) {
+//     toast.error('لطفاً اطلاعات مشتری را کامل کنید')
+//     return
+//   }
+//   if (!emailRegex.test(email.value.trim())) {
+//     toast.error('ایمیل وارد شده معتبر نیست')
+//     return
+//   }
+//   if (!phoneRegex.test(phone.value.trim())) {
+//     toast.error('شماره موبایل باید به‌صورت ۰۹xxxxxxxxx وارد شود')
+//     return
+//   }
+//   if (billingType.value === 'company' && (!companyName.value.trim() || !nationalId.value.trim())) {
+//     toast.error('لطفاً نام شرکت و شناسه ملی را وارد کنید')
+//     return
+//   }
+//   if (domainOption.value === 'existing' && !domain.value.trim()) {
+//     toast.error('دامنه خود را وارد کنید یا گزینه «بعداً ثبت می‌کنم» را انتخاب کنید')
+//     return
+//   }
+//   if (!acceptTerms.value) {
+//     toast.error('برای ادامه باید قوانین و مقررات را بپذیرید')
+//     return
+//   }
+
+//   isSubmitting.value = true
+//   try {
+//     // TODO: اتصال به API واقعی ثبت سفارش هاست
+//     const order = createOrder({
+//       ...buildProductItem(),
+//       customer: {
+//         fullName: fullName.value.trim(),
+//         email: email.value.trim(),
+//         phone: phone.value.trim(),
+//         billingType: billingType.value,
+//         companyName: companyName.value.trim(),
+//         nationalId: nationalId.value.trim()
+//       },
+//       paymentMethod: selectedPayment.value
+//     })
+
+//     if (selectedPayment.value === 'wallet') {
+//       if (!hasEnoughWalletBalance(order.amount)) {
+//         toast.error('موجودی کیف پول کافی نیست. روش «درگاه بانکی» را انتخاب کنید یا ابتدا کیف پول را شارژ کنید.')
+//         isSubmitting.value = false
+//         return
+//       }
+//       // TODO: اتصال به API واقعی کسر از کیف پول
+//       await new Promise((resolve) => setTimeout(resolve, 900))
+//       payWithWallet(order)
+//       router.push({ path: '/payment/result', query: { order: order.id, status: 'success' } })
+//       return
+//     }
+
+//     // TODO: اتصال به درگاه پرداخت واقعی — در حال حاضر به شبیه‌ساز داخلی هدایت می‌شود
+//     router.push(`/payment/gateway/${order.id}`)
+//   } catch (err) {
+//     toast.error('ثبت سفارش با خطا مواجه شد، دوباره تلاش کنید')
+//     isSubmitting.value = false
+//   }
+// }
 </script>
 
 <template>
@@ -562,7 +566,8 @@ async function submitOrder() {
               @click="submitOrder"
             >
               <Loader2 v-if="isSubmitting" class="w-4 h-4 animate-spin" />
-              {{ isSubmitting ? 'در حال پردازش...' : 'پرداخت و تکمیل سفارش' }}
+              تماس بگیرید 
+              <!-- {{ isSubmitting ? 'در حال پردازش...' : 'پرداخت و تکمیل سفارش' }} -->
             </button>
 
             <button

@@ -11,12 +11,12 @@ useHead({
 
 // --- TLD price list ---
 const tlds = [
-  { ext: '.com', price: '۸۹,۰۰۰' },
-  { ext: '.ir', price: '۴۵,۰۰۰' },
-  { ext: '.net', price: '۹۵,۰۰۰' },
-  { ext: '.org', price: '۹۹,۰۰۰' },
-  { ext: '.io', price: '۳۹۰,۰۰۰' },
-  { ext: '.co', price: '۲۱۰,۰۰۰' }
+  { ext: '.com', price: "تماس بگیرید" },
+  { ext: '.ir', price: "تماس بگیرید" },
+  { ext: '.net', price: "تماس بگیرید" },
+  { ext: '.org', price: "تماس بگیرید" },
+  { ext: '.io', price: "تماس بگیرید" },
+  { ext: '.co', price: "تماس بگیرید" }
 ]
 
 // --- Domain search (client-side mock availability, replace with real API) ---
@@ -37,7 +37,8 @@ function searchDomain() {
       const seed = (name.length + i * 7) % 5
       return {
         domain: `${name}${t.ext}`,
-        available: seed !== 0,
+        available: true,
+        // available: seed !== 0,
         price: t.price
       }
     })

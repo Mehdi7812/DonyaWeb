@@ -17,6 +17,9 @@ const rememberMe = ref(false)
 const isLoading = ref(false)
 const toast = useToast()
 
+const config = useRuntimeConfig()
+const baseUrl = config.public.apiBase
+
 async function handleLogin() {
   if (!email.value || !password.value) {
     toast.error('لطفاً ایمیل و رمز عبور را وارد کنید')
@@ -25,12 +28,30 @@ async function handleLogin() {
 
   isLoading.value = true
   try {
-    // TODO: اتصال به API واقعی ورود
-    await new Promise((resolve) => setTimeout(resolve, 1200))
-    // در صورت موفقیت، کاربر را به داشبورد هدایت کنید
+    const response = await $fetch(`${baseUrl}/auth/login`, {
+      method: 'POST',
+      body: {
+        email: email.value,
+        password: password.value
+      }
+    })
+
+    // TODO: بسته به ساختار واقعی پاسخ API این بخش را تنظیم کنید.
+    const token = response?.token
+    if (token) {
+      const authToken = useCookie('auth_token', {
+        maxAge: rememberMe.value ? 60 * 60 * 24 * 30 : undefined,
+        sameSite: 'lax'
+      })
+      authToken.value = token
+    }
+
+    toast.success('ورود با موفقیت انجام شد.')
     await navigateTo('/dashboard')
   } catch (err) {
-    toast.error('ایمیل یا رمز عبور اشتباه است')
+    // پیام خطا را در صورت وجود از پاسخ سرور می‌خوانیم، در غیر این صورت پیام پیش‌فرض
+    const message = err?.data?.message || err?.data?.error || 'ایمیل یا رمز عبور اشتباه است'
+    toast.error(message)
   } finally {
     isLoading.value = false
   }
@@ -114,9 +135,9 @@ async function handleLogin() {
           <div class="flex-1 h-px bg-white/10"></div>
           <span class="text-xs text-gray-500">یا</span>
           <div class="flex-1 h-px bg-white/10"></div>
-        </div> -->
+        </div>
 
-        <!-- <p class="text-center text-sm text-gray-400">
+        <p class="text-center text-sm text-gray-400">
           حساب کاربری ندارید؟
           <NuxtLink to="/register" class="text-purple-300 hover:text-purple-200 font-medium transition-colors">ثبت‌نام کنید</NuxtLink>
         </p> -->

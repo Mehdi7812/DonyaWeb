@@ -18,7 +18,8 @@ const typeIcon = { hosting: Server, vps: Cpu, domain: Globe }
 const typeLabel = { hosting: 'هاست ابری', vps: 'VPS ابری', domain: 'دامنه' }
 
 function formatPrice(n) {
-  return Math.round(n).toLocaleString('fa-IR')
+  return "تماس بگیرید"
+  // return Math.round(n).toLocaleString('fa-IR')
 }
 
 function handleRemove(cartId, title) {
@@ -69,80 +70,84 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const phoneRegex = /^09\d{9}$/
 
 async function handleCheckout() {
-  if (!cartItems.length) {
-    toast.error('سبد خرید شما خالی است')
-    return
-  }
-  if (!fullName.value.trim() || !email.value.trim() || !phone.value.trim()) {
-    toast.error('لطفاً اطلاعات مشتری را کامل کنید')
-    return
-  }
-  if (!emailRegex.test(email.value.trim())) {
-    toast.error('ایمیل وارد شده معتبر نیست')
-    return
-  }
-  if (!phoneRegex.test(phone.value.trim())) {
-    toast.error('شماره موبایل باید به‌صورت ۰۹xxxxxxxxx وارد شود')
-    return
-  }
-  if (billingType.value === 'company' && (!companyName.value.trim() || !nationalId.value.trim())) {
-    toast.error('لطفاً نام شرکت و شناسه ملی را وارد کنید')
-    return
-  }
-  if (!acceptTerms.value) {
-    toast.error('برای ادامه باید قوانین و مقررات را بپذیرید')
-    return
-  }
-
-  isSubmitting.value = true
-  try {
-    // TODO: اتصال به API واقعی ثبت سفارش چندآیتمی
-    const items = cartItems.map((i) => ({
-      type: i.type,
-      title: i.title,
-      identifier: i.identifier,
-      amount: i.amount,
-      cycleLabel: i.cycleLabel
-    }))
-
-    const order = createOrder({
-      type: 'cart',
-      title: items.length > 1 ? `سبد خرید (${items.length} مورد)` : items[0].title,
-      identifier: items.length > 1 ? `${items.length} سرویس` : items[0].identifier,
-      amount: Math.round(finalTotal.value),
-      items,
-      summary: items.map((i) => ({ label: i.title, value: `${formatPrice(i.amount)} تومان` })),
-      customer: {
-        fullName: fullName.value.trim(),
-        email: email.value.trim(),
-        phone: phone.value.trim(),
-        billingType: billingType.value,
-        companyName: companyName.value.trim(),
-        nationalId: nationalId.value.trim()
-      },
-      paymentMethod: selectedPayment.value
-    })
-
-    if (selectedPayment.value === 'wallet') {
-      if (!hasEnoughWalletBalance(order.amount)) {
-        toast.error('موجودی کیف پول کافی نیست. روش «درگاه بانکی» را انتخاب کنید یا ابتدا کیف پول را شارژ کنید.')
-        isSubmitting.value = false
-        return
-      }
-      await new Promise((resolve) => setTimeout(resolve, 900))
-      payWithWallet(order)
-      clearCart()
-      router.push({ path: '/payment/result', query: { order: order.id, status: 'success' } })
-      return
-    }
-
-    clearCart()
-    router.push(`/payment/gateway/${order.id}`)
-  } catch (err) {
-    toast.error('ثبت سفارش با خطا مواجه شد، دوباره تلاش کنید')
-    isSubmitting.value = false
-  }
+  window.location.href = "tel:02191090605";
 }
+
+// async function handleCheckout() {
+//   if (!cartItems.length) {
+//     toast.error('سبد خرید شما خالی است')
+//     return
+//   }
+//   if (!fullName.value.trim() || !email.value.trim() || !phone.value.trim()) {
+//     toast.error('لطفاً اطلاعات مشتری را کامل کنید')
+//     return
+//   }
+//   if (!emailRegex.test(email.value.trim())) {
+//     toast.error('ایمیل وارد شده معتبر نیست')
+//     return
+//   }
+//   if (!phoneRegex.test(phone.value.trim())) {
+//     toast.error('شماره موبایل باید به‌صورت ۰۹xxxxxxxxx وارد شود')
+//     return
+//   }
+//   if (billingType.value === 'company' && (!companyName.value.trim() || !nationalId.value.trim())) {
+//     toast.error('لطفاً نام شرکت و شناسه ملی را وارد کنید')
+//     return
+//   }
+//   if (!acceptTerms.value) {
+//     toast.error('برای ادامه باید قوانین و مقررات را بپذیرید')
+//     return
+//   }
+
+//   isSubmitting.value = true
+//   try {
+//     // TODO: اتصال به API واقعی ثبت سفارش چندآیتمی
+//     const items = cartItems.map((i) => ({
+//       type: i.type,
+//       title: i.title,
+//       identifier: i.identifier,
+//       amount: i.amount,
+//       cycleLabel: i.cycleLabel
+//     }))
+
+//     const order = createOrder({
+//       type: 'cart',
+//       title: items.length > 1 ? `سبد خرید (${items.length} مورد)` : items[0].title,
+//       identifier: items.length > 1 ? `${items.length} سرویس` : items[0].identifier,
+//       amount: Math.round(finalTotal.value),
+//       items,
+//       summary: items.map((i) => ({ label: i.title, value: `${formatPrice(i.amount)} تومان` })),
+//       customer: {
+//         fullName: fullName.value.trim(),
+//         email: email.value.trim(),
+//         phone: phone.value.trim(),
+//         billingType: billingType.value,
+//         companyName: companyName.value.trim(),
+//         nationalId: nationalId.value.trim()
+//       },
+//       paymentMethod: selectedPayment.value
+//     })
+
+//     if (selectedPayment.value === 'wallet') {
+//       if (!hasEnoughWalletBalance(order.amount)) {
+//         toast.error('موجودی کیف پول کافی نیست. روش «درگاه بانکی» را انتخاب کنید یا ابتدا کیف پول را شارژ کنید.')
+//         isSubmitting.value = false
+//         return
+//       }
+//       await new Promise((resolve) => setTimeout(resolve, 900))
+//       payWithWallet(order)
+//       clearCart()
+//       router.push({ path: '/payment/result', query: { order: order.id, status: 'success' } })
+//       return
+//     }
+
+//     clearCart()
+//     router.push(`/payment/gateway/${order.id}`)
+//   } catch (err) {
+//     toast.error('ثبت سفارش با خطا مواجه شد، دوباره تلاش کنید')
+//     isSubmitting.value = false
+//   }
+// }
 </script>
 
 <template>
@@ -393,15 +398,16 @@ async function handleCheckout() {
             >
               <Loader2 v-if="isSubmitting" class="w-5 h-5 animate-spin" />
               <ShieldCheck v-else class="w-5 h-5" />
-              {{ isSubmitting ? 'در حال ثبت سفارش...' : 'پرداخت و تکمیل خرید' }}
+              تماس بگیرید
+              <!-- {{ isSubmitting ? 'در حال ثبت سفارش...' : 'پرداخت و تکمیل خرید' }} -->
             </button>
 
             <NuxtLink
               to="/vps"
               class="w-full mt-3 inline-flex items-center justify-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors"
             >
-              <ArrowLeft class="w-4 h-4" />
-              افزودن محصول دیگر
+            افزودن محصول دیگر
+            <ArrowLeft class="w-4 h-4" />
             </NuxtLink>
           </div>
         </div>

@@ -31,5 +31,12 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxt/image']
+  modules: ['@nuxt/image'],
+
+  runtimeConfig: {
+        public: {
+            // clientVersion: pkg.version,
+            apiBase: "https://sinatech-dm.ir/GarnetAPI",
+        },
+    },
 })

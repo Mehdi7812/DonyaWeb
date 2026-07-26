@@ -12,54 +12,54 @@ const navItems = [
   { type: 'link', label: 'صفحه کاربری', to: '/dashboard', icon: Home },
   { type: 'link', label: 'خرید جدید', to: '/start', icon: ShoppingCart },
   { type: 'link', label: 'همه سرویس‌ها', to: { path: '/dashboard/services', query: {} }, icon: Settings },
-  {
-    type: 'group',
-    key: 'domains',
-    label: 'دامنه‌ها',
-    icon: Globe,
-    children: [
-      { type: 'link', label: 'مدیریت دامنه‌ها', to: '/dashboard/domains' },
-      { type: 'link', label: 'ثبت دامنه جدید', to: '/domain' },
-      { type: 'link', label: 'تمدید دامنه', to: '/dashboard/domains/renew' },
-      { type: 'link', label: 'انتقال دامنه', to: '/dashboard/domains/transfer' }
-    ]
-  },
-  {
-    type: 'group',
-    key: 'hosting',
-    label: 'هاست',
-    icon: Server,
-    children: [
-      { type: 'link', label: 'مدیریت هاست', to: { path: '/dashboard/services', query: { type: 'hosting' } } },
-      { type: 'link', label: 'خرید هاست جدید', to: '/cloudhosting' }
-    ]
-  },
-  {
-    type: 'group',
-    key: 'vps',
-    label: 'VPS',
-    icon: Cpu,
-    children: [
-      { type: 'link', label: 'مدیریت VPS', to: { path: '/dashboard/services', query: { type: 'vps' } } },
-      { type: 'link', label: 'خرید VPS جدید', to: '/vps' }
-    ]
-  },
-  { type: 'link', label: 'شبکه توزیع محتوا (CDN)', to: '/dashboard/cdn', icon: Network },
-  {
-    type: 'group',
-    key: 'finance',
-    label: 'مالی',
-    icon: Wallet,
-    children: [
-      { type: 'link', label: 'کیف پول', to: '/dashboard/finance/wallet', icon: Wallet },
-      { type: 'link', label: 'فهرست خرید', to: '/dashboard/invoices', icon: FileText },
-      { type: 'link', label: 'افزایش موجودی', to: '/dashboard/finance/topup', icon: CreditCard },
-      { type: 'link', label: 'کارت هدیه', to: '/dashboard/finance/gift-card', icon: Gift }
-    ]
-  },
+  // {
+  //   type: 'group',
+  //   key: 'domains',
+  //   label: 'دامنه‌ها',
+  //   icon: Globe,
+  //   children: [
+  //     { type: 'link', label: 'مدیریت دامنه‌ها', to: '/dashboard/domains' },
+  //     { type: 'link', label: 'ثبت دامنه جدید', to: '/domain' },
+  //     { type: 'link', label: 'تمدید دامنه', to: '/dashboard/domains/renew' },
+  //     { type: 'link', label: 'انتقال دامنه', to: '/dashboard/domains/transfer' }
+  //   ]
+  // },
+  // {
+  //   type: 'group',
+  //   key: 'hosting',
+  //   label: 'هاست',
+  //   icon: Server,
+  //   children: [
+  //     { type: 'link', label: 'مدیریت هاست', to: { path: '/dashboard/services', query: { type: 'hosting' } } },
+  //     { type: 'link', label: 'خرید هاست جدید', to: '/cloudhosting' }
+  //   ]
+  // },
+  // {
+  //   type: 'group',
+  //   key: 'vps',
+  //   label: 'VPS',
+  //   icon: Cpu,
+  //   children: [
+  //     { type: 'link', label: 'مدیریت VPS', to: { path: '/dashboard/services', query: { type: 'vps' } } },
+  //     { type: 'link', label: 'خرید VPS جدید', to: '/vps' }
+  //   ]
+  // },
+  // { type: 'link', label: 'شبکه توزیع محتوا (CDN)', to: '/dashboard/cdn', icon: Network },
+  // {
+  //   type: 'group',
+  //   key: 'finance',
+  //   label: 'مالی',
+  //   icon: Wallet,
+  //   children: [
+  //     { type: 'link', label: 'کیف پول', to: '/dashboard/finance/wallet', icon: Wallet },
+  //     { type: 'link', label: 'فهرست خرید', to: '/dashboard/invoices', icon: FileText },
+  //     { type: 'link', label: 'افزایش موجودی', to: '/dashboard/finance/topup', icon: CreditCard },
+  //     { type: 'link', label: 'کارت هدیه', to: '/dashboard/finance/gift-card', icon: Gift }
+  //   ]
+  // },
   { type: 'link', label: 'پشتیبانی', to: '/dashboard/tickets', icon: LifeBuoy, prefix: true },
-  { type: 'link', label: 'همکاری در فروش', to: '/dashboard/affiliate', icon: Users },
-  { type: 'link', label: 'انتقال مالکیت سرویس', to: '/dashboard/transfer-ownership', icon: Repeat }
+  // { type: 'link', label: 'همکاری در فروش', to: '/dashboard/affiliate', icon: Users },
+  // { type: 'link', label: 'انتقال مالکیت سرویس', to: '/dashboard/transfer-ownership', icon: Repeat }
 ]
 
 const openGroups = reactive({

@@ -166,7 +166,7 @@ async function handleSubmit() {
           <h3 class="text-lg font-bold mb-2">دفتر مرکزی</h3>
           <p class="text-gray-400 text-sm leading-relaxed mb-4">خیابان ولیعصر ، بالاتر ار پارک وی ،خیابان فیاضی ،پلاک 148 ،طبقه دوم</p>
           <div class="rounded-2xl overflow-hidden border border-white/10 h-40 bg-white/5 flex items-center justify-center text-gray-500 text-sm">
-            <NuxtImg src="/map.png" cover />
+            <NuxtImg class="w-full h-full object-cover" src="/map.png" cover />
           </div>
           <!-- <div class="rounded-2xl overflow-hidden border border-white/10 h-40 bg-white/5 flex items-center justify-center text-gray-500 text-sm">
             نقشه محل دفتر

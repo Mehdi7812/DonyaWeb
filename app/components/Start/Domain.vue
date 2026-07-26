@@ -12,10 +12,10 @@ const manualMode = ref(false)
 const manualDomain = ref('')
 
 const tlds = [
-  { ext: '.com', price: '۸۹,۰۰۰' },
-  { ext: '.ir', price: '۴۵,۰۰۰' },
-  { ext: '.net', price: '۹۵,۰۰۰' },
-  { ext: '.co', price: '۲۱۰,۰۰۰' }
+  { ext: '.com', price: 'تماس بگیرید' },
+  { ext: '.ir', price: 'تماس بگیرید' },
+  { ext: '.net', price: 'تماس بگیرید' },
+  { ext: '.co', price: 'تماس بگیرید' }
 ]
 
 function checkDomain() {
@@ -31,7 +31,8 @@ function checkDomain() {
       const seed = (name.length + i * 7) % 5
       return {
         domain: `${name}${t.ext}`,
-        available: !name.includes('test') && seed !== 0,
+        // available: !name.includes('test') && seed !== 0,
+        available: true,
         price: t.price
       }
     })

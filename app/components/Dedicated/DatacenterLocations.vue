@@ -69,7 +69,7 @@ const locations = [
         <div
           v-for="item in locations"
           :key="item.city"
-          class="glass-card rounded-3xl p-7 hover:-translate-y-2 transition-all duration-300 border border-white/10"
+          class="glass-card flex flex-col justify-between rounded-3xl p-7 hover:-translate-y-2 transition-all duration-300 border border-white/10"
         >
           <div class="text-5xl mb-4">
             {{ item.flag }}

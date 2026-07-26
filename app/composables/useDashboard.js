@@ -18,7 +18,7 @@ const services = [
     identifier: 'example.ir',
     status: 'active',
     renewDate: '۱۴۰۳/۰۹/۱۵',
-    price: '۱۲۹,۰۰۰',
+    price: "تماس بگیرید",
     cycle: 'ماهانه'
   },
   {
@@ -29,7 +29,7 @@ const services = [
     identifier: '185.231.XX.XX',
     status: 'active',
     renewDate: '۱۴۰۳/۰۸/۰۲',
-    price: '۴۹۰,۰۰۰',
+    price: "تماس بگیرید",
     cycle: 'ماهانه'
   },
   {
@@ -40,7 +40,7 @@ const services = [
     identifier: 'example.com',
     status: 'expiring',
     renewDate: '۱۴۰۳/۰۷/۲۸',
-    price: '۸۹,۰۰۰',
+    price: "تماس بگیرید",
     cycle: 'سالانه'
   },
   {
@@ -51,7 +51,7 @@ const services = [
     identifier: 'myblog.ir',
     status: 'suspended',
     renewDate: '۱۴۰۳/۰۶/۰۱',
-    price: '۴۹,۰۰۰',
+    price: "تماس بگیرید",
     cycle: 'ماهانه'
   },
   {
@@ -62,7 +62,7 @@ const services = [
     identifier: 'shop-example.ir',
     status: 'active',
     renewDate: '۱۴۰۴/۰۲/۱۰',
-    price: '۴۵,۰۰۰',
+    price: "تماس بگیرید",
     cycle: 'سالانه'
   }
 ]

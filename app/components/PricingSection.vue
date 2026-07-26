@@ -5,7 +5,7 @@ const plans = [
   {
     id: 'basic',
     name: 'هاست پایه',
-    price: '۴۹,۰۰۰',
+    price: 'تماس بگیرید',
     desc: 'مناسب برای سایت‌های شخصی',
     features: ['۱۰ GB فضای NVMe', 'پهنای باند نامحدود', '۱۰ دیتابیس', 'SSL رایگان'],
     highlighted: false
@@ -13,7 +13,7 @@ const plans = [
   {
     id: 'pro',
     name: 'هاست حرفه‌ای',
-    price: '۱۲۹,۰۰۰',
+    price: 'تماس بگیرید',
     desc: 'مناسب برای فروشگاه‌های آنلاین',
     features: ['۵۰ GB فضای NVMe', 'پهنای باند نامحدود', 'دیتابیس نامحدود', 'بک‌آپ روزانه', 'پشتیبانی اولویت‌دار'],
     highlighted: true,
@@ -22,7 +22,7 @@ const plans = [
   {
     id: 'business',
     name: 'هاست سازمانی',
-    price: '۳۴۹,۰۰۰',
+    price: 'تماس بگیرید',
     desc: 'مناسب برای سازمان‌های بزرگ',
     features: ['۲۰۰ GB فضای NVMe', 'منابع اختصاصی', 'LiteSpeed Enterprise', 'پشتیبانی تلفنی'],
     highlighted: false

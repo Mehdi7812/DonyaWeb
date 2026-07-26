@@ -28,9 +28,9 @@ const config = ref({
 
 // lightweight lookup mirroring Start/PlanSelection.vue, only used for the summary bar
 const plans = {
-  basic: { name: 'هاست پایه', price: 49000 },
-  pro: { name: 'هاست حرفه‌ای', price: 129000 },
-  business: { name: 'هاست سازمانی', price: 349000 }
+  basic: { name: 'هاست پایه', price: 'تماس بگیرید' },
+  pro: { name: 'هاست حرفه‌ای', price: 'تماس بگیرید' },
+  business: { name: 'هاست سازمانی', price: 'تماس بگیرید' }
 }
 
 const activePlan = computed(() => plans[selectedPlan.value])

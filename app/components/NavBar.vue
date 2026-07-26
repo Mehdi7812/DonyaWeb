@@ -1,11 +1,15 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { Menu, X, ShoppingCart } from 'lucide-vue-next'
 
 const scrolled = ref(false)
 const mobileOpen = ref(false)
 const route = useRoute()
 const { itemCount } = useCart()
+
+// همون کوکی‌ای که موقع ورود موفق در صفحه‌ی لاگین ست می‌شه
+const authToken = useCookie('auth_token')
+const isLoggedIn = computed(() => !!authToken.value)
 
 function handleScroll() {
   scrolled.value = window.scrollY > 50
@@ -59,13 +63,16 @@ const navLinks = [
             <ShoppingCart class="w-5 h-5" />
             <span
               v-if="itemCount > 0"
-              class="absolute -top-1 -left-1 min-w-[18px] h-[18px] px-1 rounded-full bg-linear-to-r from-purple-500 to-blue-500 text-[10px] font-bold flex items-center justify-center"
+              class="absolute -top-1 -left-1 min-w-4.5 h-4.5 px-1 rounded-full bg-linear-to-r from-purple-500 to-blue-500 text-[10px] font-bold flex items-center justify-center"
             >
               {{ itemCount }}
             </span>
           </NuxtLink>
-          <NuxtLink to="/login" class="hidden md:block px-6 py-2 rounded-full glass hover:bg-white/20 transition-all">
-            ورود
+          <NuxtLink
+            :to="isLoggedIn ? '/dashboard' : '/login'"
+            class="hidden md:block px-6 py-2 rounded-full glass hover:bg-white/20 transition-all"
+          >
+            {{ isLoggedIn ? 'پنل کاربری' : 'ورود' }}
           </NuxtLink>
           <NuxtLink to="/start" class="px-4 sm:px-6 py-2 rounded-full bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg shadow-purple-500/30 text-sm sm:text-base">
             شروع کنید
@@ -102,8 +109,11 @@ const navLinks = [
           >
             {{ link.label }}
           </NuxtLink>
-          <NuxtLink to="/login" class="px-3 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
-            ورود
+          <NuxtLink
+            :to="isLoggedIn ? '/dashboard' : '/login'"
+            class="px-3 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            {{ isLoggedIn ? 'پنل کاربری' : 'ورود' }}
           </NuxtLink>
         </div>
       </div>

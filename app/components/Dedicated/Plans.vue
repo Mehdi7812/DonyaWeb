@@ -20,7 +20,7 @@ function selectPlan(plan: { name: string; price: string; cpu: string; ram: strin
 const plans = [
   {
     name: "Starter",
-    price: "4,900,000",
+    price: "تماس بگیرید",
     cpu: "Intel Xeon E-2388G",
     ram: "32GB DDR4 ECC",
     storage: "2×960GB NVMe",
@@ -30,7 +30,7 @@ const plans = [
   },
   {
     name: "Business",
-    price: "8,900,000",
+    price: "تماس بگیرید",
     cpu: "AMD EPYC 7313P",
     ram: "64GB DDR4 ECC",
     storage: "2×1.92TB NVMe",
@@ -40,7 +40,7 @@ const plans = [
   },
   {
     name: "Enterprise",
-    price: "14,900,000",
+    price: "تماس بگیرید",
     cpu: "Dual Xeon Gold 6248",
     ram: "128GB DDR4 ECC",
     storage: "4×1.92TB NVMe RAID10",

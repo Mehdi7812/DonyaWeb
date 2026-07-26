@@ -129,7 +129,7 @@ function scrollToTop() {
           <h4 class="font-bold mb-4">ارتباط با ما</h4>
           <ul class="space-y-3 text-gray-400 text-sm">
             <li>
-              <a href="tel:02191090605 " class="flex items-center gap-2 hover:text-white transition-colors">
+              <a href="tel:02191090605" class="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone class="w-4 h-4 shrink-0" />
                 <span dir="rtl">۰۲۱-۹۱۰۹۰۶۰۵</span>
               </a>

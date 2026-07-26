@@ -31,12 +31,15 @@ const selectedYears = ref(1)
 
 const selectedDomain = computed(() => domains.find((d) => d.id === selectedId.value) || null)
 
-const basePrice = computed(() => {
-  if (!selectedDomain.value) return 0
-  return Number(selectedDomain.value.price.replace(/[^\d]/g, ''))
-})
+const basePrice = "تماس بگیرید"
 
-const totalPrice = computed(() => basePrice.value * selectedYears.value)
+// const basePrice = computed(() => {
+//   if (!selectedDomain.value) return 0
+//   return Number(selectedDomain.value.price.replace(/[^\d]/g, ''))
+// })
+
+const totalPrice = "تماس بگیرید"
+// const totalPrice = computed(() => basePrice.value * selectedYears.value)
 
 function formatNumber(n) {
   return n.toLocaleString('fa-IR')
@@ -46,14 +49,18 @@ const isSubmitting = ref(false)
 const isDone = ref(false)
 
 async function handleRenew() {
-  if (!selectedDomain.value) return
-  isSubmitting.value = true
-  // TODO: اتصال به API واقعی تمدید دامنه / درگاه پرداخت
-  await new Promise((resolve) => setTimeout(resolve, 900))
-  isSubmitting.value = false
-  isDone.value = true
-  toast.success(`دامنه ${selectedDomain.value.identifier} با موفقیت تمدید شد.`)
+  window.location.href = "tel:02191090605";
 }
+
+// async function handleRenew() {
+//   if (!selectedDomain.value) return
+//   isSubmitting.value = true
+//   // TODO: اتصال به API واقعی تمدید دامنه / درگاه پرداخت
+//   await new Promise((resolve) => setTimeout(resolve, 900))
+//   isSubmitting.value = false
+//   isDone.value = true
+//   toast.success(`دامنه ${selectedDomain.value.identifier} با موفقیت تمدید شد.`)
+// }
 </script>
 
 <template>
@@ -138,7 +145,8 @@ async function handleRenew() {
           @click="handleRenew"
         >
           <RotateCcw class="w-4 h-4" />
-          {{ isSubmitting ? 'در حال پردازش...' : 'تمدید و پرداخت' }}
+          تماس بگیرید
+          <!-- {{ isSubmitting ? 'در حال پردازش...' : 'تمدید و پرداخت' }} -->
         </button>
       </div>
 
