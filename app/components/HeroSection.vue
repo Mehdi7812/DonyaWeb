@@ -60,7 +60,7 @@ function searchDomain() {
           </button>
         </div>
         <div class="flex justify-center gap-4 mt-4 text-sm text-gray-400">
-          <span v-for="d in domainPrices" :key="d.tld" class="flex items-center gap-1">
+          <span v-for="d in domainPrices" :key="d.tld" class="flex items-center gap-1" dir="ltr">
             <Check class="w-4 h-4 text-green-400" /> {{ d.tld }} {{ d.price }}
           </span>
         </div>
