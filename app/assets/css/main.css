@@ -23,21 +23,21 @@ button {
 
 .glass {
   background: #ffffff0d !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px) !important;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .glass-strong {
+  backdrop-filter: blur(20px) !important;
   background: #ffffff1a !important;
-  backdrop-filter: blur(21px) !important;
-  -webkit-backdrop-filter: blur(21px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .glass-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -46,12 +46,12 @@ button {
 
 .blob {
   position: absolute;
-  filter: blur(80px) !important;
+  filter: blur(80px);
   opacity: 0.6;
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -69,7 +69,7 @@ button {
 .input-glass {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px);
   transition: all 0.3s;
 }
 
