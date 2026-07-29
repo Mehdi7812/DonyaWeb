@@ -17,6 +17,7 @@ const rememberMe = ref(false)
 const isLoading = ref(false)
 const toast = useToast()
 
+
 const config = useRuntimeConfig()
 const baseUrl = config.public.apiBase
 
@@ -26,31 +27,45 @@ async function handleLogin() {
     return
   }
 
+  const headers = useApiHeaders()
+
   isLoading.value = true
   try {
-    const response = await $fetch(`${baseUrl}/auth/login`, {
+    const response = await $fetch(`${baseUrl}/auth/loginEmail`, {
       method: 'POST',
+      headers: headers.value,
       body: {
         email: email.value,
         password: password.value
       }
     })
 
-    // TODO: بسته به ساختار واقعی پاسخ API این بخش را تنظیم کنید.
-    const token = response?.token
-    if (token) {
-      const authToken = useCookie('auth_token', {
-        maxAge: rememberMe.value ? 60 * 60 * 24 * 30 : undefined,
-        sameSite: 'lax'
-      })
-      authToken.value = token
+    if(response.code === 2000) {
+      // TODO: بسته به ساختار واقعی پاسخ API این بخش را تنظیم کنید.
+      const token = response?.token
+      if (token) {
+        const authToken = useCookie('donyaweb_auth_token', {
+          maxAge: rememberMe.value ? 60 * 60 * 24 * 30 : undefined,
+          sameSite: 'lax'
+        })
+        authToken.value = JSON.stringify(token)
+
+        const userCookie = useCookie('user_donyaweb', { maxAge: 60 * 60 * 24 * 30 }) // 30 روز
+        userCookie.value = JSON.stringify(response.userInfo)
+      }
+  
+      toast.success('ورود با موفقیت انجام شد.')
+      await navigateTo('/dashboard')
+      return
     }
 
-    toast.success('ورود با موفقیت انجام شد.')
-    await navigateTo('/dashboard')
+    if(response.code === 2002) {
+      toast.error('ایمیل یا رمز عبور اشتباه است.')
+      return
+    }
+
   } catch (err) {
-    // پیام خطا را در صورت وجود از پاسخ سرور می‌خوانیم، در غیر این صورت پیام پیش‌فرض
-    const message = err?.data?.message || err?.data?.error || 'ایمیل یا رمز عبور اشتباه است'
+    const message = err?.data?.message || err?.data?.error || 'خطایی رخ داده چند لحظه بعد دوباره امتحان کنید'
     toast.error(message)
   } finally {
     isLoading.value = false

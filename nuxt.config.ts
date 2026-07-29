@@ -33,10 +33,18 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/image'],
 
+  nitro: {
+    prerender: {
+      concurrency: 1,
+      failOnError: false
+    }
+  },
+
   runtimeConfig: {
         public: {
             // clientVersion: pkg.version,
-            apiBase: "https://sinatech-dm.ir/GarnetAPI",
+            apiKey: "AEbk35zB9YfSqw8u9mjH7ykNK4xq2Yq5",
+            apiBase: "https://donyaweb.com/GarnetAPI",
         },
     },
 })

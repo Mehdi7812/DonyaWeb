@@ -8,7 +8,7 @@ const route = useRoute()
 const { itemCount } = useCart()
 
 // همون کوکی‌ای که موقع ورود موفق در صفحه‌ی لاگین ست می‌شه
-const authToken = useCookie('auth_token')
+const authToken = useCookie('donyaweb_auth_token')
 const isLoggedIn = computed(() => !!authToken.value)
 
 function handleScroll() {

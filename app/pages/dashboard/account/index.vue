@@ -4,17 +4,25 @@ import { User, AtSign, Phone, Building2, Lock, Save } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
 
+const config = useRuntimeConfig()
+const baseUrl = config.public.apiBase
+const headers = useApiHeaders()
+
 useHead({
   title: 'حساب کاربری | دنیاوب'
 })
 
-const { user } = useDashboard()
+const userCookie = useCookie("user_donyaweb")
+
+const user = ref(userCookie.value)
+
+// const { user } = useDashboard()
 
 const profile = ref({
-  name: user.name,
-  email: user.email,
-  phone: user.phone,
-  company: user.company
+  name: user.value.full_name,
+  email: user.value.email,
+  phone: user.value.mobile,
+  company: user.value.register_platform
 })
 
 const passwords = ref({
@@ -36,10 +44,24 @@ const toast = useToast()
 
 async function saveProfile() {
   isSavingProfile.value = true
-  // TODO: اتصال به API واقعی به‌روزرسانی پروفایل
-  await new Promise((resolve) => setTimeout(resolve, 600))
-  isSavingProfile.value = false
-  toast.success('اطلاعات پروفایل با موفقیت ذخیره شد.')
+  try {
+    await $fetch(`${baseUrl}/users/update`, {
+      method: 'POST',
+      headers: headers.value,
+      body: {
+        full_name: profile.value.name,
+        email: profile.value.email,
+        phone: profile.value.phone,
+        company: profile.value.company
+      }
+    })
+    toast.success('اطلاعات پروفایل با موفقیت ذخیره شد.')
+  } catch (err) {
+    const message = err?.data?.message || err?.data?.error || 'ذخیره اطلاعات پروفایل با خطا مواجه شد.'
+    toast.error(message)
+  } finally {
+    isSavingProfile.value = false
+  }
 }
 
 async function savePassword() {
@@ -51,17 +73,35 @@ async function savePassword() {
     toast.error('رمز عبور جدید و تکرار آن یکسان نیستند')
     return
   }
-  if (passwords.value.next.length < 8) {
-    toast.error('رمز عبور جدید باید حداقل ۸ کاراکتر باشد')
+  if (passwords.value.next.length < 4) {
+    toast.error('رمز عبور جدید باید حداقل 4 کاراکتر باشد')
     return
   }
 
   isSavingPassword.value = true
-  // TODO: اتصال به API واقعی تغییر رمز عبور
-  await new Promise((resolve) => setTimeout(resolve, 600))
-  isSavingPassword.value = false
-  toast.success('رمز عبور با موفقیت تغییر کرد.')
-  passwords.value = { current: '', next: '', confirm: '' }
+  try {
+    const res = await $fetch(`${baseUrl}/users/updatePassword`, {
+      method: 'POST',
+      headers: headers.value,
+      body: {
+        oldPassword: passwords.value.current,
+        password: passwords.value.next,
+      }
+    })
+
+    if(res.code === 2000) {
+      toast.success('رمز عبور با موفقیت تغییر کرد.')
+      passwords.value = { current: '', next: '', confirm: '' }
+    } else {
+      toast.success('خطایی رخ داده. دوباره امتحان کنید')
+    }
+  } catch (err) {
+    console.log(err)
+    const message = err?.data?.message || err?.data?.error || 'تغییر رمز عبور با خطا مواجه شد. لطفاً رمز فعلی را بررسی کنید.'
+    toast.error(message)
+  } finally {
+    isSavingPassword.value = false
+  }
 }
 </script>
 
@@ -106,14 +146,14 @@ async function savePassword() {
           </div>
         </div>
 
-        <button
+        <!-- <button
           type="submit"
           :disabled="isSavingProfile"
           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all font-bold shadow-lg shadow-purple-500/30 disabled:opacity-60"
         >
           <Save class="w-4 h-4" />
           {{ isSavingProfile ? 'در حال ذخیره...' : 'ذخیره تغییرات' }}
-        </button>
+        </button> -->
       </form>
     </div>
 

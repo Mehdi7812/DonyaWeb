@@ -4,7 +4,9 @@ import { computed, ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
 
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
 const route = useRoute()
-const { user } = useDashboard()
+const userCookie = useCookie("user_donyaweb")
+const user = ref(userCookie.value)
+// const { user } = useDashboard()
 
 const menuOpen = ref(false)
 const notifOpen = ref(false)
@@ -189,6 +191,10 @@ const pageTitle = computed(() => {
   const base = '/' + route.path.split('/').slice(1, 3).join('/')
   return titleMap[base] || 'پنل کاربری'
 })
+
+const userInitial = computed(() => {
+  return user.value?.first_name?.charAt(0) || user.value?.full_name?.charAt(0) || '؟'
+})
 </script>
 
 <template>
@@ -284,10 +290,17 @@ const pageTitle = computed(() => {
       <!-- منوی کاربر -->
       <div class="relative">
         <button ref="menuTriggerEl" type="button" class="flex items-center gap-2" @click="toggleMenu">
-          <div class="w-9 h-9 rounded-full bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center text-xs font-bold shrink-0">
-            {{ user.initials }}
+          <div class="w-9 h-9 rounded-full overflow-hidden bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center text-xs font-bold shrink-0">
+            <img
+              v-if="user.photo"
+              :src="user.photo"
+              :alt="user.full_name"
+              class="w-full h-full object-cover"
+            />
+            <span v-else>{{ userInitial }}</span>
           </div>
-          <span class="hidden sm:block text-sm">{{ user.name }}</span>
+
+          <span class="hidden sm:block text-sm">{{ user.full_name }}</span>
           <ChevronDown class="w-4 h-4 text-gray-400 transition-transform" :class="{ 'rotate-180': menuOpen }" />
         </button>
 

@@ -1,5 +1,32 @@
 <script setup>
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
+
+const tokenCookie = useCookie("donyaweb_auth_token")
+const userCookie = useCookie("user_donyaweb")
+const config = useRuntimeConfig();
+const headers = useApiHeaders();
+
+const user = ref(userCookie.value || null);
+
+// دریافت اطلاعات کاربر از سرور
+const { data, refresh, pending, error } = await useFetch(`${config.public.apiBase}/users/userInfo`, {
+  method: "POST",
+  headers,
+});
+
+if (error.value?.statusCode === 401) {
+  toast.warning("لطفا دوباره وارد حساب کاربری شوید.");
+  userCookie.value = null;
+  tokenCookie.value = null;
+  navigateTo("/auth/login");
+}
+
+watch(data, (newData) => {
+  if (newData?.User) {
+    user.value = newData.User;
+    userCookie.value = newData.User;
+  }
+}, { immediate: true });
 </script>
 
 <template>

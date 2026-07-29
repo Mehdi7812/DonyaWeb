@@ -7,7 +7,11 @@ useHead({
   title: 'داشبورد | دنیاوب'
 })
 
-const { user, stats, getExpiringServices, getRecentTickets } = useDashboard()
+const userCookie = useCookie("user_donyaweb")
+
+const user = ref(userCookie.value)
+
+const { stats, getExpiringServices, getRecentTickets } = useDashboard()
 
 const expiringServices = getExpiringServices()
 const recentTickets = getRecentTickets()
@@ -18,7 +22,7 @@ const recentTickets = getRecentTickets()
     <!-- Welcome -->
     <div class="glass-card rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
       <div>
-        <h2 class="text-xl sm:text-2xl font-bold mb-1">سلام {{ user.name.split(' ')[0] }}، خوش برگشتی 👋</h2>
+        <h2 class="text-xl sm:text-2xl font-bold mb-1">سلام {{ user.full_name.split(' ')[0] }}، خوش برگشتی 👋</h2>
         <p class="text-gray-400 text-sm">خلاصه‌ای از وضعیت سرویس‌ها و حساب کاربری‌ات</p>
       </div>
       <NuxtLink

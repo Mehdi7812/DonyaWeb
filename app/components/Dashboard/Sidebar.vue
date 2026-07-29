@@ -7,6 +7,11 @@ import {
 
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
 const route = useRoute()
+const router = useRouter()
+
+// احراز هویت و کوکی
+const userCookie = useCookie("user_donyaweb");
+const tokenCookie = useCookie("donyaweb_auth_token");
 
 const navItems = [
   { type: 'link', label: 'صفحه کاربری', to: '/dashboard', icon: Home },
@@ -111,6 +116,13 @@ watch(
 
 function closeMobileSidebar() {
   sidebarOpen.value = false
+}
+
+const logOut = () => {
+  tokenCookie.value = null;
+  userCookie.value = null;
+  if (process.client) localStorage.clear();
+  router.replace("/login");
 }
 </script>
 
@@ -223,7 +235,7 @@ function closeMobileSidebar() {
         <span>بازگشت به سایت</span>
       </NuxtLink>
 
-      <button
+      <button @click="logOut"
         type="button"
         class="nav-link text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all w-full"
       >
