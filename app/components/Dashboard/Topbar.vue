@@ -4,7 +4,11 @@ import { computed, ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
 
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
 const route = useRoute()
+const router = useRouter()
+
+const tokenCookie = useCookie("donyaweb_auth_token")
 const userCookie = useCookie("user_donyaweb")
+
 const user = ref(userCookie.value)
 // const { user } = useDashboard()
 
@@ -195,6 +199,13 @@ const pageTitle = computed(() => {
 const userInitial = computed(() => {
   return user.value?.first_name?.charAt(0) || user.value?.full_name?.charAt(0) || '؟'
 })
+
+const logOut = () => {
+  tokenCookie.value = null;
+  userCookie.value = null;
+  if (process.client) localStorage.clear();
+  router.replace("/login");
+}
 </script>
 
 <template>
@@ -315,7 +326,7 @@ const userInitial = computed(() => {
             >
               <NuxtLink to="/dashboard/account" class="block px-4 py-2 rounded-lg hover:bg-white/10 transition-all">حساب کاربری</NuxtLink>
               <NuxtLink to="/" class="block px-4 py-2 rounded-lg hover:bg-white/10 transition-all">بازگشت به سایت</NuxtLink>
-              <button type="button" class="w-full text-right px-4 py-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-all">خروج</button>
+              <button @click="logOut" type="button" class="w-full text-right px-4 py-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-all">خروج</button>
             </div>
           </Transition>
         </Teleport>
