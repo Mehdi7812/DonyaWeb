@@ -1,9 +1,11 @@
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, watch, onMounted } from 'vue'
 import {
   Wallet, Plus, ArrowDownLeft, ArrowUpRight, Landmark, Gift, FileText,
   Clock, TrendingUp, TrendingDown, Search, X, Loader2, ShieldCheck, Copy
 } from 'lucide-vue-next'
+
+const { toJalaliDate } = useJalaliDate()
 
 definePageMeta({ layout: 'dashboard' })
 
@@ -11,14 +13,57 @@ useHead({
   title: 'کیف پول | دنیاوب'
 })
 
-const { wallet, user, requestWithdraw } = useDashboard()
+const userCookie = useCookie("user_donyaweb")
+
+const config = useRuntimeConfig()
+const headers = useApiHeaders()
+
+const { data: walletData, refresh: refreshWallet, pending: walletPending } = await useFetch(`${config.public.apiBase}/wallets/getBalance`,
+  {
+    method: 'POST',
+    headers,
+    immediate: false,
+  }
+)
+
+const { data: transactionsData, refresh: refreshTransactions, pending: transactionsPending } = await useFetch(`${config.public.apiBase}/wallets/showTransactions`,
+  {
+    method: 'POST',
+    headers,
+    immediate: false,
+  }
+)
+
+onMounted(async () => {
+  await Promise.all([
+    refreshWallet(),
+    refreshTransactions(),
+  ])
+})
+
+const user = ref(userCookie.value)
+
+const { wallet, requestWithdraw } = useDashboard()
 const toast = useToast()
 
-// کپی محلی و واکنش‌گرا از داده‌ی کیف‌پول (همان الگوی صفحه‌ی افزایش موجودی)
+const tomanWallet = computed(() =>
+  walletData.value?.Wallets?.find(w => w.currency_symbol === 'IRT')
+)
+
 const state = reactive({
-  balance: wallet.balance,
+  balance: 0,
   history: [...wallet.history]
 })
+
+watch(
+  tomanWallet,
+  (wallet) => {
+    if (wallet) {
+      state.balance = Number(wallet.balance)
+    }
+  },
+  { immediate: true }
+)
 
 function formatNumber(n) {
   return Math.abs(n).toLocaleString('fa-IR')
@@ -108,18 +153,63 @@ const filters = [
 ]
 
 const typeMeta = {
-  topup: { label: 'واریز', color: 'text-green-400', icon: ArrowDownLeft },
-  usage: { label: 'مصرف', color: 'text-red-400', icon: ArrowUpRight },
-  withdraw: { label: 'برداشت', color: 'text-orange-400', icon: ArrowUpRight }
+  deposit: {
+    label: 'واریز',
+    color: 'text-green-400',
+    icon: ArrowDownLeft,
+  },
+
+  purchase: {
+    label: 'خرید',
+    color: 'text-red-400',
+    icon: ArrowUpRight,
+  },
+
+  withdraw: {
+    label: 'برداشت',
+    color: 'text-orange-400',
+    icon: Landmark,
+  },
+
+  transfer: {
+    label: 'انتقال',
+    color: 'text-blue-400',
+    icon: ArrowUpRight,
+  },
+
+  award: {
+    label: 'پاداش',
+    color: 'text-yellow-400',
+    icon: Gift,
+  },
 }
 
 const filteredHistory = computed(() => {
-  return state.history.filter((t) => {
-    const matchesFilter = activeFilter.value === 'all' || t.type === activeFilter.value
-    const q = searchQuery.value.trim().toLowerCase()
-    const matchesSearch = !q || t.id.toLowerCase().includes(q) || t.method.toLowerCase().includes(q)
-    return matchesFilter && matchesSearch
-  })
+  const transactions = transactionsData.value?.WalletTransactions ?? []
+
+  return transactions
+    .map((t) => ({
+      id: t.wallet_transactions_id,
+      type: t.kind_text,
+      amount: Number(t.amount),
+      method: t.payment_procedure_title || t.gateway_title || '-',
+      date: t.document_date,
+      status: t.status_text,
+      trackingCode: t.tracking_code,
+    }))
+    .filter((t) => {
+      const matchesFilter =
+        activeFilter.value === 'all' || t.type === activeFilter.value
+
+      const q = searchQuery.value.trim().toLowerCase()
+
+      const matchesSearch =
+        !q ||
+        String(t.id).includes(q) ||
+        t.method.toLowerCase().includes(q)
+
+      return matchesFilter && matchesSearch
+    })
 })
 
 function copyBalance() {
@@ -318,21 +408,66 @@ function copyBalance() {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="t in filteredHistory" :key="t.id" class="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                <td class="px-6 py-4 font-medium" dir="ltr">{{ t.id }}</td>
+              <tr
+                v-if="transactionsPending"
+              >
+                <td
+                  colspan="6"
+                  class="px-6 py-12 text-center text-gray-500"
+                >
+                  در حال دریافت تراکنش‌ها...
+                </td>
+              </tr>
+
+              <tr
+                v-else
+                v-for="t in filteredHistory"
+                :key="t.id"
+                class="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors"
+              >
+                <td class="px-6 py-4 font-medium" dir="ltr">
+                  {{ t.id }}
+                </td>
+
                 <td class="px-6 py-4">
-                  <span class="inline-flex items-center gap-1.5" :class="typeMeta[t.type]?.color">
-                    <component :is="typeMeta[t.type]?.icon" class="w-4 h-4" />
+                  <span
+                    class="inline-flex items-center gap-1.5"
+                    :class="typeMeta[t.type]?.color"
+                  >
+                    <component
+                      :is="typeMeta[t.type]?.icon"
+                      class="w-4 h-4"
+                    />
                     {{ typeMeta[t.type]?.label || t.type }}
                   </span>
                 </td>
-                <td class="px-6 py-4 text-gray-300" dir="ltr">{{ formatNumber(t.amount) }}</td>
-                <td class="px-6 py-4 text-gray-400">{{ t.method }}</td>
-                <td class="px-6 py-4 text-gray-400">{{ t.date }}</td>
-                <td class="px-6 py-4"><DashboardStatusBadge :status="t.status" /></td>
+
+                <td class="px-6 py-4 text-gray-300" dir="ltr">
+                  {{ formatNumber(t.amount) }}
+                </td>
+
+                <td class="px-6 py-4 text-gray-400">
+                  {{ t.method }}
+                </td>
+
+                <td class="px-6 py-4 text-gray-400">
+                  {{ t.date }}
+                </td>
+
+                <td class="px-6 py-4">
+                  <DashboardStatusBadge :status="t.status" />
+                </td>
               </tr>
-              <tr v-if="!filteredHistory.length">
-                <td colspan="6" class="px-6 py-12 text-center text-gray-500">تراکنشی با این مشخصات پیدا نشد.</td>
+
+              <tr
+                v-if="!transactionsPending && !filteredHistory.length"
+              >
+                <td
+                  colspan="6"
+                  class="px-6 py-12 text-center text-gray-500"
+                >
+                  تراکنشی یافت نشد.
+                </td>
               </tr>
             </tbody>
           </table>
@@ -388,7 +523,7 @@ function copyBalance() {
           <div class="divide-y divide-white/5 text-sm">
             <div class="flex justify-between p-4">
               <span class="text-gray-400">نام کاربر</span>
-              <span class="font-medium">{{ user.name }}</span>
+              <span class="font-medium">{{ user.full_name }}</span>
             </div>
             <div class="flex justify-between p-4">
               <span class="text-gray-400">ایمیل</span>
@@ -396,7 +531,7 @@ function copyBalance() {
             </div>
             <div class="flex justify-between p-4">
               <span class="text-gray-400">تاریخ عضویت</span>
-              <span class="font-medium">{{ user.joinDate }}</span>
+              <span class="font-medium">{{ toJalaliDate(user.register_date) }}</span>
             </div>
           </div>
         </div>

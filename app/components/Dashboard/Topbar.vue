@@ -1,5 +1,5 @@
 <script setup>
-import { Menu, Bell, ChevronDown, CheckCheck, CreditCard, Server, MessageSquare } from 'lucide-vue-next'
+import { Menu, Bell, ChevronDown, CheckCheck, CreditCard, Server, MessageSquare, Wallet } from 'lucide-vue-next'
 import { computed, ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
 
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
@@ -218,6 +218,17 @@ const logOut = () => {
     </div>
 
     <div class="flex items-center gap-3 sm:gap-4">
+      <NuxtLink
+        to="/dashboard/finance/wallet"
+        class="flex items-center gap-2 px-3 h-10 rounded-full glass hover:bg-white/20 transition-all group"
+      >
+        <Wallet class="w-4.5 h-4.5 text-emerald-400" />
+
+        <span class="hidden md:block text-sm font-medium">
+          ۲۵۰,۰۰۰ تومان
+        </span>
+      </NuxtLink>
+
       <!-- اعلانات -->
       <div class="relative">
         <button

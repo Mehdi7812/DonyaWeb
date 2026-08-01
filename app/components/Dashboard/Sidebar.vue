@@ -2,7 +2,8 @@
 import { reactive, watch } from 'vue'
 import {
   Home, ShoppingCart, Settings, Server, Globe, Cpu, Network, Wallet, FileText,
-  CreditCard, Gift, LifeBuoy, Users, Repeat, ChevronDown, LogOut, X
+  CreditCard, Gift, LifeBuoy, Users, Repeat, ChevronDown, LogOut, X,
+  FileTextIcon
 } from 'lucide-vue-next'
 
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
@@ -50,19 +51,20 @@ const navItems = [
   //   ]
   // },
   // { type: 'link', label: 'شبکه توزیع محتوا (CDN)', to: '/dashboard/cdn', icon: Network },
-  // {
-  //   type: 'group',
-  //   key: 'finance',
-  //   label: 'مالی',
-  //   icon: Wallet,
-  //   children: [
-  //     { type: 'link', label: 'کیف پول', to: '/dashboard/finance/wallet', icon: Wallet },
-  //     { type: 'link', label: 'فهرست خرید', to: '/dashboard/invoices', icon: FileText },
-  //     { type: 'link', label: 'افزایش موجودی', to: '/dashboard/finance/topup', icon: CreditCard },
-  //     { type: 'link', label: 'کارت هدیه', to: '/dashboard/finance/gift-card', icon: Gift }
-  //   ]
-  // },
+  {
+    type: 'group',
+    key: 'finance',
+    label: 'مالی',
+    icon: Wallet,
+    children: [
+      { type: 'link', label: 'کیف پول', to: '/dashboard/finance/wallet', icon: Wallet },
+      { type: 'link', label: 'فهرست خرید', to: '/dashboard/invoices', icon: FileText },
+      { type: 'link', label: 'افزایش موجودی', to: '/dashboard/finance/topup', icon: CreditCard },
+      { type: 'link', label: 'کارت هدیه', to: '/dashboard/finance/gift-card', icon: Gift }
+    ]
+  },
   { type: 'link', label: 'پشتیبانی', to: '/dashboard/tickets', icon: LifeBuoy, prefix: true },
+  { type: 'link', label: 'فاکتورها', to: '/dashboard/purchaserecords', icon: FileTextIcon, prefix: true },
   // { type: 'link', label: 'همکاری در فروش', to: '/dashboard/affiliate', icon: Users },
   // { type: 'link', label: 'انتقال مالکیت سرویس', to: '/dashboard/transfer-ownership', icon: Repeat }
 ]

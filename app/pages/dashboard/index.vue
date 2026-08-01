@@ -6,15 +6,37 @@ definePageMeta({ layout: 'dashboard' })
 useHead({
   title: 'داشبورد | دنیاوب'
 })
+const { toJalaliDate } = useJalaliDate()
 
 const userCookie = useCookie("user_donyaweb")
-
 const user = ref(userCookie.value)
+const config = useRuntimeConfig()
+const headers = useApiHeaders();
 
-const { stats, getExpiringServices, getRecentTickets } = useDashboard()
+const { data, refresh, pending, error } = await useFetch(`${config.public.apiBase}/tickets/indexByUserId`, {
+  method: 'POST',
+  headers,
+  body: {
+    status: "1,2,3,4,5,6"
+  },
+})
+
+const tickets = computed(() => data.value?.Tickets ?? [])
+
+const { stats, getExpiringServices } = useDashboard()
 
 const expiringServices = getExpiringServices()
-const recentTickets = getRecentTickets()
+// const recentTickets = getRecentTickets()
+const recentTickets = computed(() =>
+  tickets.value
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.updated_at).getTime() -
+        new Date(a.updated_at).getTime()
+    )
+    .slice(0, 5)
+)
 </script>
 
 <template>
@@ -90,11 +112,32 @@ const recentTickets = getRecentTickets()
             class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all"
           >
             <div class="min-w-0">
-              <p class="font-medium text-sm truncate">{{ t.subject }}</p>
-              <p class="text-xs text-gray-500">{{ t.date }}</p>
+              <p class="font-medium text-sm truncate">
+                {{ t.title }}
+              </p>
+
+              <div class="flex items-center gap-2 mt-1">
+                <span class="text-xs text-gray-500">
+                  {{ t.department_title }}
+                </span>
+
+                <span class="text-xs text-gray-600">•</span>
+
+                <span class="text-xs text-gray-500">
+                  {{ toJalaliDate(t.created_at) }}
+                </span>
+              </div>
             </div>
-            <DashboardStatusBadge :status="t.status" />
+
+            <DashboardStatusBadge :status="t.status_text" />
           </NuxtLink>
+
+          <div
+            v-if="!pending && !recentTickets.length"
+            class="text-center text-gray-500 py-8"
+          >
+            هنوز تیکتی ثبت نشده است.
+          </div>
         </div>
       </div>
     </div>
