@@ -22,7 +22,6 @@ const { data: walletData, refresh: refreshWallet, pending: walletPending } = awa
   {
     method: 'POST',
     headers,
-    immediate: false,
   }
 )
 
@@ -30,16 +29,8 @@ const { data: transactionsData, refresh: refreshTransactions, pending: transacti
   {
     method: 'POST',
     headers,
-    immediate: false,
   }
 )
-
-onMounted(async () => {
-  await Promise.all([
-    refreshWallet(),
-    refreshTransactions(),
-  ])
-})
 
 const user = ref(userCookie.value)
 
@@ -110,35 +101,53 @@ function toggleWithdrawForm() {
 
 async function submitWithdraw() {
   const amount = Number(withdrawAmount.value)
+
   if (!amount || amount < 50000) {
-    toast.error('حداقل مبلغ قابل برداشت ۵۰,۰۰۰ تومان است')
+    toast.error('حداقل مبلغ برداشت ۵۰,۰۰۰ تومان است.')
     return
   }
-  if (amount > state.balance) {
-    toast.error('مبلغ درخواستی بیشتر از موجودی کیف پول است')
-    return
-  }
-  if (!withdrawDestination.value.trim()) {
-    toast.error('لطفاً شماره کارت یا شبا مقصد را وارد کنید')
+
+  if (!isValidSheba(withdrawDestination.value)) {
+    toast.error('شماره شبا معتبر نیست.')
     return
   }
 
   isWithdrawing.value = true
-  // TODO: اتصال به API واقعی ثبت درخواست برداشت (نیاز به تایید ادمین/بانک)
-  await new Promise((resolve) => setTimeout(resolve, 900))
 
-  const ok = requestWithdraw(amount, `کارت ${withdrawDestination.value.trim()}`)
-  if (ok) {
-    state.balance = wallet.balance
-    state.history = [...wallet.history]
-    toast.success('درخواست برداشت شما ثبت شد و پس از بررسی طی ۲۴ ساعت کاری واریز می‌شود.')
+  try {
+    const { data, error } = await useFetch(
+      `${config.public.apiBase}/wallets/createTransactionsRequest`,
+      {
+        method: 'POST',
+        headers,
+        body: {
+          amount,
+          dynamic_column_01: withdrawDestination.value.trim(),
+          kind: 2,
+        },
+      }
+    )
+
+    if (error.value || data.value?.code !== 2000) {
+      throw new Error(data.value?.message || 'ثبت درخواست ناموفق بود.')
+    }
+
+    toast.success('درخواست برداشت با موفقیت ثبت شد.')
+
     withdrawAmount.value = ''
     withdrawDestination.value = ''
     showWithdrawForm.value = false
-  } else {
-    toast.error('ثبت درخواست برداشت با خطا مواجه شد')
+
+    // بروزرسانی موجودی و تاریخچه تراکنش‌ها
+    await Promise.all([
+      refreshWallet?.(),
+      refreshTransactions?.(),
+    ])
+  } catch (err) {
+    toast.error(err.message || 'خطایی در ثبت درخواست رخ داد.')
+  } finally {
+    isWithdrawing.value = false
   }
-  isWithdrawing.value = false
 }
 
 // --- فیلتر و جستجوی تراکنش‌ها ---
@@ -218,6 +227,44 @@ function copyBalance() {
     toast.success('موجودی در کلیپ‌بورد کپی شد')
   }
 }
+
+// const withdrawDestination = ref('')
+
+function onShebaInput(e) {
+  const input = e.target
+
+  let value = input.value
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+
+  if (!value.startsWith('IR')) {
+    value = 'IR' + value.replace(/^IR/i, '')
+  }
+
+  withdrawDestination.value = value.slice(0, 26)
+}
+
+// function isValidSheba(sheba) {
+//   return /^IR\d{24}$/.test(sheba)
+// }
+
+function isValidSheba(sheba) {
+  sheba = sheba.replace(/\s+/g, '').toUpperCase()
+
+  if (!/^IR\d{24}$/.test(sheba)) return false
+
+  const rearranged = sheba.slice(4) + '1827' + sheba.slice(2, 4)
+
+  let remainder = ''
+
+  for (const char of rearranged) {
+    remainder = (remainder + char)
+
+    remainder = (BigInt(remainder) % 97n).toString()
+  }
+
+  return remainder === '1'
+}
 </script>
 
 <template>
@@ -295,15 +342,16 @@ function copyBalance() {
           >
         </div>
         <div>
-          <label class="block text-sm text-gray-300 mb-2">شماره کارت مقصد</label>
+          <label class="block text-sm text-gray-300 mb-2">شماره شبا مقصد</label>
           <input
             v-model="withdrawDestination"
             type="text"
             dir="ltr"
-            maxlength="16"
-            placeholder="6037XXXXXXXXXXXX"
+            maxlength="26"
+            placeholder="IR062960000000100324200001"
             class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-gray-500 outline-none text-left"
-          >
+            @input="onShebaInput"
+          />
         </div>
       </div>
 

@@ -8,12 +8,35 @@ useHead({
   title: 'افزایش موجودی کیف پول | دنیاوب'
 })
 
+const config = useRuntimeConfig()
+const headers = useApiHeaders()
+
+const { data: transactionsData, refresh: refreshTransactions, pending: transactionsPending } = await useFetch(`${config.public.apiBase}/wallets/showTransactions`,
+  {
+    method: 'POST',
+    headers,
+  }
+)
+
+const { toJalaliDate } = useJalaliDate()
+
+const transactions = computed(() => {
+  return (transactionsData.value?.WalletTransactions ?? []).map((t) => ({
+    id: t.wallet_transactions_id,
+    type: t.kind_text,
+    amount: Number(t.amount),
+    method: t.payment_procedure_title || t.gateway_title || '-',
+    date: toJalaliDate(t.document_date),
+    status: t.status_text,
+  }))
+})
+
 const { wallet } = useDashboard()
 const toast = useToast()
 
 const state = reactive({
   balance: wallet.balance,
-  history: [...wallet.history]
+  // history: [...wallet.history]
 })
 
 const quickAmounts = [100000, 200000, 500000, 1000000]
@@ -154,18 +177,85 @@ async function handleTopup() {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="t in state.history" :key="t.id" class="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-              <td class="px-6 py-4 font-medium" dir="ltr">{{ t.id }}</td>
+            <tr v-if="transactionsPending">
+              <td
+                colspan="6"
+                class="px-6 py-12 text-center text-gray-500"
+              >
+                در حال دریافت تراکنش‌ها...
+              </td>
+            </tr>
+
+            <tr
+              v-else-if="transactions.length"
+              v-for="t in transactions"
+              :key="t.id"
+              class="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors"
+            >
+              <td class="px-6 py-4 font-medium" dir="ltr">
+                {{ t.id }}
+              </td>
+
               <td class="px-6 py-4">
-                <span class="inline-flex items-center gap-1.5" :class="t.type === 'topup' ? 'text-green-400' : 'text-red-400'">
-                  <component :is="t.type === 'topup' ? ArrowDownLeft : ArrowUpRight" class="w-4 h-4" />
-                  {{ t.type === 'topup' ? 'واریز' : 'برداشت' }}
+                <span
+                  class="inline-flex items-center gap-1.5"
+                  :class="{
+                    'text-green-400': t.type === 'deposit',
+                    'text-red-400': t.type === 'purchase',
+                    'text-orange-400': t.type === 'withdraw',
+                    'text-blue-400': t.type === 'transfer',
+                    'text-yellow-400': t.type === 'award',
+                  }"
+                >
+                  <component
+                    :is="
+                      t.type === 'deposit'
+                        ? ArrowDownLeft
+                        : ArrowUpRight
+                    "
+                    class="w-4 h-4"
+                  />
+
+                  {{
+                    t.type === 'deposit'
+                      ? 'واریز'
+                      : t.type === 'purchase'
+                      ? 'خرید'
+                      : t.type === 'withdraw'
+                      ? 'برداشت'
+                      : t.type === 'transfer'
+                      ? 'انتقال'
+                      : t.type === 'award'
+                      ? 'پاداش'
+                      : t.type
+                  }}
                 </span>
               </td>
-              <td class="px-6 py-4 text-gray-300" dir="ltr">{{ formatNumber(Math.abs(t.amount)) }}</td>
-              <td class="px-6 py-4 text-gray-400">{{ t.method }}</td>
-              <td class="px-6 py-4 text-gray-400">{{ t.date }}</td>
-              <td class="px-6 py-4"><DashboardStatusBadge :status="t.status" /></td>
+
+              <td class="px-6 py-4 text-gray-300" dir="ltr">
+                {{ formatNumber(Math.abs(t.amount)) }}
+              </td>
+
+              <td class="px-6 py-4 text-gray-400">
+                {{ t.method }}
+              </td>
+
+              <td class="px-6 py-4 text-gray-400">
+                {{ t.date }}
+              </td>
+
+              <td class="px-6 py-4">
+                <DashboardStatusBadge :status="t.status" />
+              </td>
+            </tr>
+
+            <tr v-else>
+              <td
+                colspan="6"
+                class="px-6 py-12 text-center text-gray-500"
+              >
+                هنوز تراکنشی ثبت نشده است.
+              </td>
             </tr>
           </tbody>
         </table>

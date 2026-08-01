@@ -224,8 +224,11 @@ const logOut = () => {
       >
         <Wallet class="w-4.5 h-4.5 text-emerald-400" />
 
-        <span class="hidden md:block text-sm font-medium">
+        <!-- <span class="hidden md:block text-sm font-medium">
           ۲۵۰,۰۰۰ تومان
+        </span> -->
+        <span class="hidden md:block text-sm font-medium">
+          کیف پول
         </span>
       </NuxtLink>
 

@@ -1,5 +1,6 @@
 <script setup>
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
+const toast = useToast()
 
 const tokenCookie = useCookie("donyaweb_auth_token")
 const userCookie = useCookie("user_donyaweb")
@@ -18,7 +19,7 @@ if (error.value?.statusCode === 401) {
   toast.warning("لطفا دوباره وارد حساب کاربری شوید.");
   userCookie.value = null;
   tokenCookie.value = null;
-  navigateTo("/auth/login");
+  navigateTo("/login");
 }
 
 watch(data, (newData) => {
