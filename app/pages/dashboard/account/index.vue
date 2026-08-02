@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { User, AtSign, Phone, Building2, Lock, Save } from 'lucide-vue-next'
+import { User, AtSign, Phone, Building2, Lock, Save, CreditCard } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
 
@@ -15,8 +15,6 @@ useHead({
 const userCookie = useCookie("user_donyaweb")
 
 const user = ref(userCookie.value)
-
-// const { user } = useDashboard()
 
 const profile = ref({
   name: user.value.full_name,
@@ -64,6 +62,111 @@ async function saveProfile() {
   }
 }
 
+const ibanNumber = ref(
+  normalizeShebaInput(
+    user.value?.irb_iban_number ||
+    user.value?.iban_number ||
+    user.value?.iban ||
+    ''
+  )
+)
+
+const isSavingBankInfo = ref(false)
+
+function toEnglishDigits(value) {
+  return String(value || '')
+    .replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+    .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+}
+
+function normalizeShebaInput(value) {
+  return toEnglishDigits(value)
+    .toUpperCase()
+    .replace(/[\s-]/g, '')
+    .replace(/^IR/, '')
+    .replace(/\D/g, '')
+    .slice(0, 24)
+}
+
+function onIbanInput(event) {
+  ibanNumber.value = normalizeShebaInput(event.target.value)
+}
+
+function isValidShebaNumber(value) {
+  const digits = normalizeShebaInput(value)
+
+  if (!/^\d{24}$/.test(digits)) {
+    return false
+  }
+
+  const sheba = `IR${digits}`
+
+  const rearranged = sheba.slice(4) + sheba.slice(0, 4)
+
+  const converted = rearranged.replace(/[A-Z]/g, char => {
+    return String(char.charCodeAt(0) - 55)
+  })
+
+  let remainder = 0
+
+  for (const digit of converted) {
+    remainder = (remainder * 10 + Number(digit)) % 97
+  }
+
+  return remainder === 1
+}
+
+async function saveBankInfo() {
+  if (isSavingBankInfo.value) return
+
+  if (!ibanNumber.value) {
+    toast.info('شماره شبا خود را وارد کنید')
+    return
+  }
+
+  if (!isValidShebaNumber(ibanNumber.value)) {
+    toast.error('فرمت شماره شبا اشتباه می‌باشد')
+    return
+  }
+
+  isSavingBankInfo.value = true
+
+  try {
+    const sendData = {
+      irb_iban_number: `IR${ibanNumber.value}`
+    }
+
+    const response = await $fetch(`${baseUrl}/users/updateIban`, {
+      method: 'POST',
+      headers: headers.value,
+      body: sendData
+    })
+
+    if (Number(response?.code) === 2000) {
+      toast.success('اطلاعات ثبت شد.')
+
+      user.value = {
+        ...(user.value || {}),
+        irb_iban_number: sendData.irb_iban_number
+      }
+
+      userCookie.value = user.value
+    } else {
+      toast.error(response?.error || response?.msg || 'خطا در ثبت اطلاعات')
+    }
+  } catch (err) {
+    const message =
+      err?.data?.message ||
+      err?.data?.error ||
+      err?.data?.msg ||
+      'خطا در ثبت اطلاعات بانکی'
+
+    toast.error(message)
+  } finally {
+    isSavingBankInfo.value = false
+  }
+}
+
 async function savePassword() {
   if (!passwords.value.current || !passwords.value.next || !passwords.value.confirm) {
     toast.error('لطفاً همه فیلدها را تکمیل کنید')
@@ -93,7 +196,7 @@ async function savePassword() {
       toast.success('رمز عبور با موفقیت تغییر کرد.')
       passwords.value = { current: '', next: '', confirm: '' }
     } else {
-      toast.success('خطایی رخ داده. دوباره امتحان کنید')
+      toast.error('خطایی رخ داده. دوباره امتحان کنید')
     }
   } catch (err) {
     console.log(err)
@@ -154,6 +257,52 @@ async function savePassword() {
           <Save class="w-4 h-4" />
           {{ isSavingProfile ? 'در حال ذخیره...' : 'ذخیره تغییرات' }}
         </button> -->
+      </form>
+    </div>
+
+    <!-- Bank Info -->
+    <div class="glass-card rounded-3xl p-6 sm:p-8">
+      <h2 class="text-lg font-bold mb-6">اطلاعات بانکی</h2>
+
+      <form class="space-y-5" @submit.prevent="saveBankInfo">
+        <div>
+          <label for="iban-number" class="block text-sm text-gray-300 mb-2">
+            شماره شبا
+          </label>
+
+          <div class="relative">
+            <CreditCard class="w-5 h-5 text-gray-400 absolute top-1/2 -translate-y-1/2 right-4" />
+
+            <span class="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400 font-medium">
+              IR
+            </span>
+
+            <input
+              id="iban-number"
+              :value="ibanNumber"
+              @input="onIbanInput"
+              type="text"
+              inputmode="numeric"
+              dir="ltr"
+              maxlength="32"
+              placeholder="240123456789012345678901"
+              class="w-full pr-12 pl-14 py-3 rounded-xl input-glass text-white outline-none tracking-widest"
+            >
+          </div>
+
+          <p class="text-xs text-gray-400 mt-2">
+            شماره شبا را بدون IR وارد کنید.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          :disabled="isSavingBankInfo"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition-all font-medium disabled:opacity-60"
+        >
+          <Save class="w-4 h-4" />
+          {{ isSavingBankInfo ? 'در حال ثبت...' : 'ثبت شماره شبا' }}
+        </button>
       </form>
     </div>
 

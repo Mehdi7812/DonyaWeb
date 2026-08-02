@@ -2,6 +2,8 @@
 import { Menu, Bell, ChevronDown, CheckCheck, CreditCard, Server, MessageSquare, Wallet } from 'lucide-vue-next'
 import { computed, ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
 
+const { balance, formatNumber } = useWallet()
+
 const sidebarOpen = useState('dashboardSidebarOpen', () => false)
 const route = useRoute()
 const router = useRouter()
@@ -224,12 +226,12 @@ const logOut = () => {
       >
         <Wallet class="w-4.5 h-4.5 text-emerald-400" />
 
-        <!-- <span class="hidden md:block text-sm font-medium">
-          ۲۵۰,۰۰۰ تومان
-        </span> -->
         <span class="hidden md:block text-sm font-medium">
-          کیف پول
+        {{ formatNumber(balance) }} تومان
         </span>
+        <!-- <span class="hidden md:block text-sm font-medium">
+          کیف پول
+        </span> -->
       </NuxtLink>
 
       <!-- اعلانات -->

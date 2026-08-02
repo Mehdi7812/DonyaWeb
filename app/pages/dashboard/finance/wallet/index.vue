@@ -2,7 +2,8 @@
 import { reactive, ref, computed, watch, onMounted } from 'vue'
 import {
   Wallet, Plus, ArrowDownLeft, ArrowUpRight, Landmark, Gift, FileText,
-  Clock, TrendingUp, TrendingDown, Search, X, Loader2, ShieldCheck, Copy
+  Clock, TrendingUp, TrendingDown, Search, X, Loader2, ShieldCheck, Copy,
+  Pencil
 } from 'lucide-vue-next'
 
 const { toJalaliDate } = useJalaliDate()
@@ -14,64 +15,33 @@ useHead({
 })
 
 const userCookie = useCookie("user_donyaweb")
-
-const config = useRuntimeConfig()
-const headers = useApiHeaders()
-
-const { data: walletData, refresh: refreshWallet, pending: walletPending } = await useFetch(`${config.public.apiBase}/wallets/getBalance`,
-  {
-    method: 'POST',
-    headers,
-  }
-)
-
-const { data: transactionsData, refresh: refreshTransactions, pending: transactionsPending } = await useFetch(`${config.public.apiBase}/wallets/showTransactions`,
-  {
-    method: 'POST',
-    headers,
-  }
-)
-
 const user = ref(userCookie.value)
 
-const { wallet, requestWithdraw } = useDashboard()
+// شماره شبای ذخیره‌شده در پروفایل کاربر (از صفحه حساب کاربری) — پیش‌نیاز درخواست برداشت
+const savedIban = computed(() => user.value?.irb_iban_number || '')
+const hasSavedIban = computed(() => Boolean(savedIban.value))
+
+const {
+  balance,
+  transactions: history,
+  pendingItems,
+  totalDeposited,
+  totalSpent,
+  transactionsPending,
+  ensureLoaded,
+  refresh,
+  requestWithdraw: submitWithdrawRequest,
+  formatNumber
+} = useWallet()
+
+await ensureLoaded()
+
 const toast = useToast()
 
-const tomanWallet = computed(() =>
-  walletData.value?.Wallets?.find(w => w.currency_symbol === 'IRT')
-)
-
-const state = reactive({
-  balance: 0,
-  history: [...wallet.history]
-})
-
-watch(
-  tomanWallet,
-  (wallet) => {
-    if (wallet) {
-      state.balance = Number(wallet.balance)
-    }
-  },
-  { immediate: true }
-)
-
-function formatNumber(n) {
-  return Math.abs(n).toLocaleString('fa-IR')
-}
-
-// --- آمار کلی ---
-const totalDeposited = computed(() =>
-  state.history.filter((t) => t.type === 'topup' && t.status === 'paid').reduce((sum, t) => sum + t.amount, 0)
-)
-const totalSpent = computed(() =>
-  state.history.filter((t) => t.type === 'usage' && t.status === 'paid').reduce((sum, t) => sum + Math.abs(t.amount), 0)
-)
-const pendingCount = computed(() => state.history.filter((t) => t.status === 'pending').length)
-const pendingItems = computed(() => state.history.filter((t) => t.status === 'pending'))
+const pendingCount = computed(() => pendingItems.value.length)
 
 const statCards = computed(() => [
-  { icon: Wallet, label: 'موجودی قابل استفاده', value: `${formatNumber(state.balance)} تومان`, color: 'from-purple-500 to-blue-600' },
+  { icon: Wallet, label: 'موجودی قابل استفاده', value: `${formatNumber(balance.value)} تومان`, color: 'from-purple-500 to-blue-600' },
   { icon: TrendingUp, label: 'مجموع واریزی‌ها', value: `${formatNumber(totalDeposited.value)} تومان`, color: 'from-green-500 to-emerald-600' },
   { icon: TrendingDown, label: 'مجموع مصرف', value: `${formatNumber(totalSpent.value)} تومان`, color: 'from-orange-500 to-red-500' },
   { icon: Clock, label: 'در انتظار تسویه', value: `${pendingCount.value} تراکنش`, color: 'from-yellow-500 to-amber-600' }
@@ -92,57 +62,46 @@ const trendMax = Math.max(...weeklyTrend.flatMap((d) => [d.deposit, d.usage]))
 // --- فرم درخواست برداشت ---
 const showWithdrawForm = ref(false)
 const withdrawAmount = ref('')
-const withdrawDestination = ref('')
 const isWithdrawing = ref(false)
 
 function toggleWithdrawForm() {
+  if (!hasSavedIban.value) {
+    toast.error('برای برداشت وجه ابتدا باید شماره شبای خود را در حساب کاربری ثبت کنید.')
+    return
+  }
+
   showWithdrawForm.value = !showWithdrawForm.value
 }
 
 async function submitWithdraw() {
+  if (!hasSavedIban.value) {
+    toast.error('برای برداشت وجه ابتدا باید شماره شبای خود را در حساب کاربری ثبت کنید.')
+    return
+  }
+
   const amount = Number(withdrawAmount.value)
+  const iban = savedIban.value.trim()
 
   if (!amount || amount < 50000) {
     toast.error('حداقل مبلغ برداشت ۵۰,۰۰۰ تومان است.')
     return
   }
 
-  if (!isValidSheba(withdrawDestination.value)) {
-    toast.error('شماره شبا معتبر نیست.')
+  if (!isValidSheba(iban)) {
+    toast.error('شماره شبای ثبت‌شده معتبر نیست. لطفاً آن را از بخش حساب کاربری بررسی کنید.')
     return
   }
 
   isWithdrawing.value = true
 
   try {
-    const { data, error } = await useFetch(
-      `${config.public.apiBase}/wallets/createTransactionsRequest`,
-      {
-        method: 'POST',
-        headers,
-        body: {
-          amount,
-          dynamic_column_01: withdrawDestination.value.trim(),
-          kind: 2,
-        },
-      }
-    )
-
-    if (error.value || data.value?.code !== 2000) {
-      throw new Error(data.value?.message || 'ثبت درخواست ناموفق بود.')
-    }
+    // همیشه شبای ثبت‌شده کاربر ارسال می‌شود.
+    await submitWithdrawRequest(amount, iban)
 
     toast.success('درخواست برداشت با موفقیت ثبت شد.')
 
     withdrawAmount.value = ''
-    withdrawDestination.value = ''
     showWithdrawForm.value = false
-
-    // بروزرسانی موجودی و تاریخچه تراکنش‌ها
-    await Promise.all([
-      refreshWallet?.(),
-      refreshTransactions?.(),
-    ])
   } catch (err) {
     toast.error(err.message || 'خطایی در ثبت درخواست رخ داد.')
   } finally {
@@ -194,18 +153,7 @@ const typeMeta = {
 }
 
 const filteredHistory = computed(() => {
-  const transactions = transactionsData.value?.WalletTransactions ?? []
-
-  return transactions
-    .map((t) => ({
-      id: t.wallet_transactions_id,
-      type: t.kind_text,
-      amount: Number(t.amount),
-      method: t.payment_procedure_title || t.gateway_title || '-',
-      date: t.document_date,
-      status: t.status_text,
-      trackingCode: t.tracking_code,
-    }))
+  return history.value
     .filter((t) => {
       const matchesFilter =
         activeFilter.value === 'all' || t.type === activeFilter.value
@@ -223,30 +171,10 @@ const filteredHistory = computed(() => {
 
 function copyBalance() {
   if (import.meta.client) {
-    navigator.clipboard?.writeText(String(state.balance))
+    navigator.clipboard?.writeText(String(balance.value))
     toast.success('موجودی در کلیپ‌بورد کپی شد')
   }
 }
-
-// const withdrawDestination = ref('')
-
-function onShebaInput(e) {
-  const input = e.target
-
-  let value = input.value
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, '')
-
-  if (!value.startsWith('IR')) {
-    value = 'IR' + value.replace(/^IR/i, '')
-  }
-
-  withdrawDestination.value = value.slice(0, 26)
-}
-
-// function isValidSheba(sheba) {
-//   return /^IR\d{24}$/.test(sheba)
-// }
 
 function isValidSheba(sheba) {
   sheba = sheba.replace(/\s+/g, '').toUpperCase()
@@ -282,7 +210,7 @@ function isValidSheba(sheba) {
           <div>
             <p class="text-gray-400 text-sm mb-1">موجودی قابل استفاده</p>
             <div class="flex items-center gap-2">
-              <p class="text-3xl sm:text-4xl font-black">{{ formatNumber(state.balance) }}</p>
+              <p class="text-3xl sm:text-4xl font-black">{{ formatNumber(balance) }}</p>
               <span class="text-base font-normal text-gray-400">تومان</span>
               <button type="button" class="text-gray-500 hover:text-white transition-colors" @click="copyBalance">
                 <Copy class="w-4 h-4" />
@@ -301,7 +229,9 @@ function isValidSheba(sheba) {
           </NuxtLink>
           <button
             type="button"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl glass border border-white/10 hover:border-purple-500/40 transition-all font-bold"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl glass border border-white/10 transition-all font-bold"
+            :class="hasSavedIban ? 'hover:border-purple-500/40' : 'opacity-50 cursor-not-allowed'"
+            :title="hasSavedIban ? '' : 'ابتدا شماره شبا را در حساب کاربری ثبت کنید'"
             @click="toggleWithdrawForm"
           >
             <Landmark class="w-4 h-4" />
@@ -316,10 +246,24 @@ function isValidSheba(sheba) {
           </NuxtLink>
         </div>
       </div>
+
+      <div
+        v-if="!hasSavedIban"
+        class="relative mt-6 flex flex-wrap items-center gap-3 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200"
+      >
+        <ShieldCheck class="w-4 h-4 shrink-0" />
+        <span>برای فعال‌شدن برداشت وجه، ابتدا باید شماره شبای خود را در حساب کاربری ثبت کنید.</span>
+        <NuxtLink
+          to="/dashboard/account"
+          class="mr-auto inline-flex items-center gap-1 font-bold text-white underline underline-offset-4 hover:text-purple-300"
+        >
+          ثبت شماره شبا
+        </NuxtLink>
+      </div>
     </div>
 
     <!-- فرم درخواست برداشت -->
-    <div v-if="showWithdrawForm" class="glass-card rounded-3xl p-6 sm:p-8 space-y-5">
+    <div v-if="showWithdrawForm && hasSavedIban" class="glass-card rounded-3xl p-6 sm:p-8 space-y-5">
       <div class="flex items-center justify-between">
         <h2 class="text-lg font-bold flex items-center gap-2">
           <Landmark class="w-5 h-5 text-purple-400" />
@@ -344,13 +288,13 @@ function isValidSheba(sheba) {
         <div>
           <label class="block text-sm text-gray-300 mb-2">شماره شبا مقصد</label>
           <input
-            v-model="withdrawDestination"
+            :value="savedIban"
             type="text"
             dir="ltr"
-            maxlength="26"
-            placeholder="IR062960000000100324200001"
-            class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-gray-500 outline-none text-left"
-            @input="onShebaInput"
+            readonly
+            aria-readonly="true"
+            class="w-full px-4 py-3 rounded-xl input-glass text-gray-300 outline-none text-left cursor-not-allowed opacity-75"
+            title="شماره شبا فقط از بخش حساب کاربری قابل ثبت است"
           />
         </div>
       </div>
@@ -385,7 +329,7 @@ function isValidSheba(sheba) {
     </div>
 
     <!-- نمودار روند هفتگی (SVG سبک، بدون نیاز به پکیج جانبی) -->
-    <div class="glass-card rounded-3xl p-6 sm:p-8">
+    <!-- <div class="glass-card rounded-3xl p-6 sm:p-8">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-bold">روند واریز و مصرف (۷ روز اخیر)</h2>
         <div class="flex items-center gap-4 text-xs text-gray-400">
@@ -408,7 +352,7 @@ function isValidSheba(sheba) {
           <span class="text-[11px] text-gray-500">{{ d.day }}</span>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="grid lg:grid-cols-3 gap-6">
       <!-- جدول تراکنش‌ها -->
@@ -565,8 +509,17 @@ function isValidSheba(sheba) {
 
         <!-- اطلاعات حساب -->
         <div class="glass-card rounded-3xl overflow-hidden">
-          <div class="p-5 border-b border-white/10">
+          <div class="p-5 border-b border-white/10 flex items-center justify-between">
             <h3 class="font-bold">اطلاعات حساب</h3>
+            
+            <NuxtLink
+              to="/dashboard/account"
+              title="ویرایش اطلاعات حساب"
+              class="inline-flex items-center gap-1 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+            >
+              <Pencil class="w-3.5 h-3.5" />
+              ویرایش
+            </NuxtLink>
           </div>
           <div class="divide-y divide-white/5 text-sm">
             <div class="flex justify-between p-4">

@@ -49,7 +49,7 @@ watch(data, (newData) => {
     <Transition name="fade">
       <div
         v-if="sidebarOpen"
-        class="fixed inset-0 bg-black/60 z-30 lg:hidden"
+        class="fixed inset-0 bg-black/10 z-30 lg:hidden"
         @click="sidebarOpen = false"
       />
     </Transition>

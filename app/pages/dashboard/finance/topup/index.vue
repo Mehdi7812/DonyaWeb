@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { Wallet, CreditCard, Landmark, Plus, ArrowDownLeft, ArrowUpRight } from 'lucide-vue-next'
 
 definePageMeta({ layout: 'dashboard' })
@@ -8,36 +8,24 @@ useHead({
   title: 'افزایش موجودی کیف پول | دنیاوب'
 })
 
-const config = useRuntimeConfig()
-const headers = useApiHeaders()
-
-const { data: transactionsData, refresh: refreshTransactions, pending: transactionsPending } = await useFetch(`${config.public.apiBase}/wallets/showTransactions`,
-  {
-    method: 'POST',
-    headers,
-  }
-)
-
 const { toJalaliDate } = useJalaliDate()
 
-const transactions = computed(() => {
-  return (transactionsData.value?.WalletTransactions ?? []).map((t) => ({
-    id: t.wallet_transactions_id,
-    type: t.kind_text,
-    amount: Number(t.amount),
-    method: t.payment_procedure_title || t.gateway_title || '-',
-    date: toJalaliDate(t.document_date),
-    status: t.status_text,
-  }))
-})
+const {
+  balance,
+  transactions: history,
+  transactionsPending,
+  ensureLoaded,
+  refresh,
+  formatNumber
+} = useWallet()
 
-const { wallet } = useDashboard()
+await ensureLoaded()
+
+const transactions = computed(() =>
+  history.value.map((t) => ({ ...t, date: toJalaliDate(t.date) }))
+)
+
 const toast = useToast()
-
-const state = reactive({
-  balance: wallet.balance,
-  // history: [...wallet.history]
-})
 
 const quickAmounts = [100000, 200000, 500000, 1000000]
 const amount = ref(200000)
@@ -48,10 +36,6 @@ const isSubmitting = ref(false)
 function selectQuick(a) {
   amount.value = a
   customAmount.value = ''
-}
-
-function formatNumber(n) {
-  return n.toLocaleString('fa-IR')
 }
 
 async function handleTopup() {
@@ -65,15 +49,8 @@ async function handleTopup() {
   // TODO: اتصال به درگاه پرداخت واقعی (زرین‌پال / کارت بانکی)
   await new Promise((resolve) => setTimeout(resolve, 900))
 
-  state.balance += finalAmount
-  state.history.unshift({
-    id: `TXN-${Math.floor(2000 + Math.random() * 900)}`,
-    type: 'topup',
-    amount: finalAmount,
-    date: 'همین الان',
-    status: 'paid',
-    method: method.value === 'gateway' ? 'درگاه زرین‌پال' : 'کارت بانکی'
-  })
+  // بعد از تکمیل پرداخت، موجودی و تاریخچه از سرور دوباره خوانده می‌شود
+  await refresh()
 
   isSubmitting.value = false
   toast.success(`مبلغ ${formatNumber(finalAmount)} تومان با موفقیت به کیف پول اضافه شد.`)
@@ -90,7 +67,7 @@ async function handleTopup() {
         </div>
         <div>
           <p class="text-gray-400 text-sm mb-1">موجودی کیف پول</p>
-          <p class="text-2xl font-bold">{{ formatNumber(state.balance) }} <span class="text-sm font-normal text-gray-400">تومان</span></p>
+          <p class="text-2xl font-bold">{{ formatNumber(balance) }} <span class="text-sm font-normal text-gray-400">تومان</span></p>
         </div>
       </div>
     </div>
