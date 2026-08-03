@@ -48,10 +48,10 @@ async function handleLogin() {
           maxAge: rememberMe.value ? 60 * 60 * 24 * 30 : undefined,
           sameSite: 'lax'
         })
-        authToken.value = JSON.stringify(token)
+        authToken.value = token
 
-        const userCookie = useCookie('user_donyaweb', { maxAge: 60 * 60 * 24 * 30 }) // 30 روز
-        userCookie.value = JSON.stringify(response.userInfo)
+        // اطلاعات کاربر اینجا ذخیره نمی‌شود؛ middleware/auth.global.js سر اولین
+        // ورود به داشبورد از /users/userInfo می‌گیرد و در localStorage ذخیره می‌کند.
       }
   
       toast.success('ورود با موفقیت انجام شد.')

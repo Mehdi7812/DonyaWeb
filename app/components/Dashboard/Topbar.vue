@@ -9,9 +9,7 @@ const route = useRoute()
 const router = useRouter()
 
 const tokenCookie = useCookie("donyaweb_auth_token")
-const userCookie = useCookie("user_donyaweb")
-
-const user = ref(userCookie.value)
+const { user, clearUser } = useUserInfo()
 // const { user } = useDashboard()
 
 const menuOpen = ref(false)
@@ -204,7 +202,7 @@ const userInitial = computed(() => {
 
 const logOut = () => {
   tokenCookie.value = null;
-  userCookie.value = null;
+  clearUser();
   if (process.client) localStorage.clear();
   router.replace("/login");
 }
@@ -319,15 +317,15 @@ const logOut = () => {
         <button ref="menuTriggerEl" type="button" class="flex items-center gap-2" @click="toggleMenu">
           <div class="w-9 h-9 rounded-full overflow-hidden bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center text-xs font-bold shrink-0">
             <img
-              v-if="user.photo"
+              v-if="user?.photo"
               :src="user.photo"
-              :alt="user.full_name"
+              :alt="user?.full_name"
               class="w-full h-full object-cover"
             />
             <span v-else>{{ userInitial }}</span>
           </div>
 
-          <span class="hidden sm:block text-sm">{{ user.full_name }}</span>
+          <span class="hidden sm:block text-sm">{{ user?.full_name || 'کاربر' }}</span>
           <ChevronDown class="w-4 h-4 text-gray-400 transition-transform" :class="{ 'rotate-180': menuOpen }" />
         </button>
 

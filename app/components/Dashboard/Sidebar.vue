@@ -10,8 +10,8 @@ const sidebarOpen = useState('dashboardSidebarOpen', () => false)
 const route = useRoute()
 const router = useRouter()
 
-// احراز هویت و کوکی
-const userCookie = useCookie("user_donyaweb");
+// احراز هویت
+const { clearUser } = useUserInfo()
 const tokenCookie = useCookie("donyaweb_auth_token");
 
 const navItems = [
@@ -122,7 +122,7 @@ function closeMobileSidebar() {
 
 const logOut = () => {
   tokenCookie.value = null;
-  userCookie.value = null;
+  clearUser();
   if (process.client) localStorage.clear();
   router.replace("/login");
 }

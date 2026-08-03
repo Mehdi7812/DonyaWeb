@@ -14,8 +14,7 @@ useHead({
   title: 'کیف پول | دنیاوب'
 })
 
-const userCookie = useCookie("user_donyaweb")
-const user = ref(userCookie.value)
+const { user } = useUserInfo()
 
 // شماره شبای ذخیره‌شده در پروفایل کاربر (از صفحه حساب کاربری) — پیش‌نیاز درخواست برداشت
 const savedIban = computed(() => user.value?.irb_iban_number || '')

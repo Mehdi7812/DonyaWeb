@@ -12,15 +12,13 @@ useHead({
   title: 'حساب کاربری | دنیاوب'
 })
 
-const userCookie = useCookie("user_donyaweb")
-
-const user = ref(userCookie.value)
+const { user, setUser } = useUserInfo()
 
 const profile = ref({
-  name: user.value.full_name,
-  email: user.value.email,
-  phone: user.value.mobile,
-  company: user.value.register_platform
+  name: user.value?.full_name || '',
+  email: user.value?.email || '',
+  phone: user.value?.mobile || '',
+  company: user.value?.register_platform || ''
 })
 
 const passwords = ref({
@@ -145,12 +143,10 @@ async function saveBankInfo() {
     if (Number(response?.code) === 2000) {
       toast.success('اطلاعات ثبت شد.')
 
-      user.value = {
+      setUser({
         ...(user.value || {}),
         irb_iban_number: sendData.irb_iban_number
-      }
-
-      userCookie.value = user.value
+      })
     } else {
       toast.error(response?.error || response?.msg || 'خطا در ثبت اطلاعات')
     }
